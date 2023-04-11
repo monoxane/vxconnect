@@ -10,6 +10,8 @@ import (
 var (
 	AppMode  string = "PROD"
 	LogLevel string = "INFO"
+
+	JWTSecret string
 )
 
 func Load() bool {
@@ -34,6 +36,14 @@ func Load() bool {
 	if viper.IsSet("LOG_LEVEL") {
 		LogLevel = viper.GetString("LOG_LEVEL")
 		log.Printf("[ENV] Log Level: %s", LogLevel)
+	}
+
+	if viper.IsSet("JWT_SECRET") {
+		JWTSecret = viper.GetString("JWT_SECRET")
+		log.Printf("[ENV] JWT Secret Set")
+	} else {
+		log.Printf("[ENV] MISSING JWT_SECRET")
+		return false
 	}
 
 	return true

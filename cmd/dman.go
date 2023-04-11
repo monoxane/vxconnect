@@ -3,8 +3,8 @@ package main
 import (
 	"os"
 
-	"github.com/monoxane/dman/internal/config"
-	"github.com/monoxane/dman/internal/logging"
+	"github.com/monoxane/vxconnect/internal/config"
+	"github.com/monoxane/vxconnect/internal/logging"
 )
 
 var (

@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/monoxane/dman/internal/config"
+	"github.com/monoxane/vxconnect/internal/config"
 
 	"github.com/rs/zerolog"
 	zlog "github.com/rs/zerolog/log"
