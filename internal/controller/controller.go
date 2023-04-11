@@ -56,19 +56,20 @@ func NewRESTServer() *gin.Engine {
 	users.POST("/new", handleNewUser)
 	users.PATCH("/:id", handleUpdateUser)
 	users.DELETE("/:id", handleDeleteUser)
-	users.POST("/:id/zones", NotImplemented)       // TODO HANDLE ASSIGNING A USER A ZONE - NEEDS ADMIN
-	users.DELETE("/:id/zones/:id", NotImplemented) // TODO HANDLE REMOVING A USER ZONE - NEEDS ADMIN
+	users.POST("/:id/zones", NotImplemented)         // TODO HANDLE ASSIGNING A USER A ZONE - NEEDS ADMIN
+	users.DELETE("/:id/zones/:zone", NotImplemented) // TODO HANDLE REMOVING A USER ZONE - NEEDS ADMIN
 
 	zones := api.Group("/zones")
 	zones.Use(auth.JWTMiddleware())
 
 	zones.GET("", handleZones)
+	zones.GET("/:zone", handleZone)
 	zones.POST("/new", handleNewZone)
-	zones.DELETE("/:id", handleDeleteZone)
-	zones.GET("/:id/records", NotImplemented)            // TODO HANDLE GETTING ZONE RECORDS - NEEDS OPERATOR
-	zones.POST("/:id/records/new", NotImplemented)       // TODO HANDLE CREATING RECORD IN ZONE - NEEDS OPERATOR
-	zones.PATCH("/:id/records/:record", NotImplemented)  // TODO HANDLE UPDATING RECORD IN ZONE - NEEDS OPERATOR
-	zones.DELETE("/:id/records/:record", NotImplemented) // TODO HANDLE DELETING RECORD FROM ZONE - NEEDS OPERATOR
+	zones.DELETE("/:zone", handleDeleteZone)
+	zones.GET("/:zone/records", handleZoneRecords)
+	zones.POST("/:zone/records/new", handleNewZoneRecord)
+	zones.PATCH("/:zone/records/:id", handleUpdateZoneRecord)
+	zones.DELETE("/:zone/records/:id", handleDeleteZoneRecord)
 
 	return server
 }

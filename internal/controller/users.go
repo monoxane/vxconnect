@@ -3,7 +3,6 @@ package controller
 import (
 	"errors"
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
@@ -113,7 +112,6 @@ func (controller *Controller) HandleNewUser(context *gin.Context) {
 		PasswordHash: hash,
 		Role:         payload.Role,
 		Zones:        payload.Zones,
-		UpdateAt:     time.Now(),
 	}
 
 	storeErr := controller.persistance.CreateUser(user)

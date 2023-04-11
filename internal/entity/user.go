@@ -25,7 +25,7 @@ type User struct {
 	Role         string                `json:"role"`
 	Zones        []string              `json:"zones" gorm:"serializer:json"`
 	CreatedAt    time.Time             `json:"created_at"`
-	UpdateAt     time.Time             `json:"updated_at"`
+	UpdatedAt    time.Time             `json:"updated_at"`
 	DeletedAt    soft_delete.DeletedAt `json:"deleted_at"`
 }
 

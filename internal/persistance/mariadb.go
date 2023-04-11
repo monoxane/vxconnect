@@ -125,14 +125,77 @@ func (s *MariaDBStore) GetZones() ([]*entity.Zone, error) {
 	return zones, nil
 }
 
+func (s *MariaDBStore) GetZoneByID(id string) (*entity.Zone, error) {
+	zone := &entity.Zone{}
+	result := s.connection.First(zone, "id = ?", id)
+
+	if result.Error != nil {
+		return nil, result.Error
+	}
+
+	return zone, nil
+}
+
 func (s *MariaDBStore) CreateZone(zone *entity.Zone) error {
 	result := s.connection.Create(zone)
 
 	return result.Error
 }
 
+func (s *MariaDBStore) SaveZone(zone *entity.Zone) error {
+	result := s.connection.Save(zone)
+
+	return result.Error
+}
+
 func (s *MariaDBStore) DeleteZone(id string) error {
 	result := s.connection.Delete(&entity.Zone{}, "id = ?", id)
+
+	return result.Error
+}
+
+func (s *MariaDBStore) DeleteZoneRecords(zone string) error {
+	result := s.connection.Delete(&entity.Record{}, "zone_id = ?", zone)
+
+	return result.Error
+}
+
+func (s *MariaDBStore) GetZoneRecords(zone string) ([]*entity.Record, error) {
+	records := []*entity.Record{}
+	result := s.connection.Find(&records, "zone_id = ?", zone)
+
+	if result.Error != nil {
+		return nil, fmt.Errorf("unable to query DB for zone records: %s", result.Error)
+	}
+
+	return records, nil
+}
+
+func (s *MariaDBStore) GetRecordByID(id string) (*entity.Record, error) {
+	record := &entity.Record{}
+	result := s.connection.First(&record, "id = ?", id)
+
+	if result.Error != nil {
+		return nil, fmt.Errorf("unable to query DB for zone records: %s", result.Error)
+	}
+
+	return record, nil
+}
+
+func (s *MariaDBStore) CreateRecord(record *entity.Record) error {
+	result := s.connection.Create(record)
+
+	return result.Error
+}
+
+func (s *MariaDBStore) SaveRecord(record *entity.Record) error {
+	result := s.connection.Save(record)
+
+	return result.Error
+}
+
+func (s *MariaDBStore) DeleteRecord(id string) error {
+	result := s.connection.Delete(&entity.Record{}, "id = ?", id)
 
 	return result.Error
 }
