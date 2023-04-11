@@ -46,6 +46,8 @@ func NewMariaDBStore(host string, port int, user, pass, name string) (*MariaDBSt
 func (s *MariaDBStore) Migrate() error {
 	var err error
 	err = s.connection.AutoMigrate(&entity.User{})
+	err = s.connection.AutoMigrate(&entity.Zone{})
+	err = s.connection.AutoMigrate(&entity.Record{})
 
 	if err != nil {
 		return fmt.Errorf("unable to migrate entity: %s", err)
@@ -108,6 +110,29 @@ func (s *MariaDBStore) SaveUser(user *entity.User) error {
 
 func (s *MariaDBStore) DeleteUser(id string) error {
 	result := s.connection.Delete(&entity.User{}, "id = ?", id)
+
+	return result.Error
+}
+
+func (s *MariaDBStore) GetZones() ([]*entity.Zone, error) {
+	zones := []*entity.Zone{}
+	result := s.connection.Find(&zones)
+
+	if result.Error != nil {
+		return nil, fmt.Errorf("unable to query DB for zones: %s", result.Error)
+	}
+
+	return zones, nil
+}
+
+func (s *MariaDBStore) CreateZone(zone *entity.Zone) error {
+	result := s.connection.Create(zone)
+
+	return result.Error
+}
+
+func (s *MariaDBStore) DeleteZone(id string) error {
+	result := s.connection.Delete(&entity.Zone{}, "id = ?", id)
 
 	return result.Error
 }

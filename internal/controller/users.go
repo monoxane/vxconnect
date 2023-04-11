@@ -108,7 +108,7 @@ func (controller *Controller) HandleNewUser(context *gin.Context) {
 	}
 
 	user := &entity.User{
-		Id:           uuid.NewString(),
+		ID:           uuid.NewString(),
 		Username:     payload.Username,
 		PasswordHash: hash,
 		Role:         payload.Role,

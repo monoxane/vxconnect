@@ -13,4 +13,8 @@ type Store interface {
 	CreateUser(user *entity.User) error
 	SaveUser(user *entity.User) error
 	DeleteUser(id string) error
+
+	GetZones() ([]*entity.Zone, error)
+	CreateZone(zone *entity.Zone) error
+	DeleteZone(id string) error
 }

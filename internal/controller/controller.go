@@ -62,10 +62,9 @@ func NewRESTServer() *gin.Engine {
 	zones := api.Group("/zones")
 	zones.Use(auth.JWTMiddleware())
 
-	zones.GET("/", NotImplemented)                       // TODO HANDLE ZONES
-	zones.POST("/new", NotImplemented)                   // TODO HANDLE NEW ZONE - NEEDS SUPER
-	zones.PATCH("/:id", NotImplemented)                  // TODO HANDLE UPDATING ZONE
-	zones.DELETE("/:id", NotImplemented)                 // TODO HANDLE DELETING ZONE
+	zones.GET("", handleZones)
+	zones.POST("/new", handleNewZone)
+	zones.DELETE("/:id", handleDeleteZone)
 	zones.GET("/:id/records", NotImplemented)            // TODO HANDLE GETTING ZONE RECORDS - NEEDS OPERATOR
 	zones.POST("/:id/records/new", NotImplemented)       // TODO HANDLE CREATING RECORD IN ZONE - NEEDS OPERATOR
 	zones.PATCH("/:id/records/:record", NotImplemented)  // TODO HANDLE UPDATING RECORD IN ZONE - NEEDS OPERATOR

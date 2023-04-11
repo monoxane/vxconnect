@@ -51,7 +51,7 @@ func main() {
 	}
 
 	user := &entity.User{
-		Id:           uuid.NewString(),
+		ID:           uuid.NewString(),
 		Username:     os.Args[1],
 		PasswordHash: hash,
 		Role:         controller.ROLE_ADMIN,

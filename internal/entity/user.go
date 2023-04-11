@@ -19,7 +19,7 @@ type LoginResponse struct {
 }
 
 type User struct {
-	Id           string                `json:"id" gorm:"<-:create"`
+	ID           string                `json:"id" gorm:"<-:create"`
 	Username     string                `json:"username" gorm:"unique;<-:create"`
 	PasswordHash string                `json:"-"`
 	Role         string                `json:"role"`
