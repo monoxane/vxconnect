@@ -12,6 +12,13 @@ var (
 	LogLevel string = "INFO"
 
 	JWTSecret string
+
+	PersistanceDriver string
+	MariaDBHost       string
+	MariaDBPort       int
+	MariaDBUsername   string
+	MariaDBPassword   string
+	DatabaseName      string
 )
 
 func Load() bool {
@@ -43,6 +50,60 @@ func Load() bool {
 		log.Printf("[ENV] JWT Secret Set")
 	} else {
 		log.Printf("[ENV] MISSING JWT_SECRET")
+		return false
+	}
+
+	if viper.IsSet("PERSISTANCE_DRIVER") {
+		PersistanceDriver = viper.GetString("PERSISTANCE_DRIVER")
+
+		switch PersistanceDriver {
+		case "mariadb":
+			if viper.IsSet("MARIADB_HOST") {
+				MariaDBHost = viper.GetString("MARIADB_HOST")
+				log.Printf("[ENV] MariaDB Host Set")
+			} else {
+				log.Printf("[ENV] MISSING MARIADB_HOST")
+				return false
+			}
+
+			if viper.IsSet("MARIADB_PORT") {
+				MariaDBPort = viper.GetInt("MARIADB_PORT")
+				log.Printf("[ENV] MariaDB Port Set")
+			} else {
+				log.Printf("[ENV] MISSING MARIADB_PORT")
+				return false
+			}
+
+			if viper.IsSet("MARIADB_USERNAME") {
+				MariaDBUsername = viper.GetString("MARIADB_USERNAME")
+				log.Printf("[ENV] MariaDB Username Set")
+			} else {
+				log.Printf("[ENV] MISSING MARIADB_USERNAME")
+				return false
+			}
+
+			if viper.IsSet("MARIADB_PASSWORD") {
+				MariaDBPassword = viper.GetString("MARIADB_PASSWORD")
+				log.Printf("[ENV] MariaDB Password Set")
+			} else {
+				log.Printf("[ENV] MISSING MARIADB_PASSWORD")
+				return false
+			}
+
+			if viper.IsSet("DB_NAME") {
+				DatabaseName = viper.GetString("DB_NAME")
+				log.Printf("[ENV] MariaDB DB Name Set")
+			} else {
+				log.Printf("[ENV] MISSING DB_NAME")
+				return false
+			}
+
+		default:
+			log.Printf("[ENV] UNKNOWN PERSISTANCE DRIVER %s", PersistanceDriver)
+			return false
+		}
+	} else {
+		log.Printf("[ENV] NO PERSISTANCE DRIVER SPECIFIED")
 		return false
 	}
 
