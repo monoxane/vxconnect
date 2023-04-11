@@ -3,8 +3,11 @@ package main
 import (
 	"os"
 
+	"github.com/google/uuid"
+	"github.com/monoxane/vxconnect/internal/auth"
 	"github.com/monoxane/vxconnect/internal/config"
 	"github.com/monoxane/vxconnect/internal/controller"
+	"github.com/monoxane/vxconnect/internal/entity"
 	"github.com/monoxane/vxconnect/internal/logging"
 	"github.com/monoxane/vxconnect/internal/persistance"
 )
@@ -35,14 +38,28 @@ func main() {
 		log.Fatal().Err(storeError).Msg("an error occured while initialising the persistance store")
 	}
 
-	migrationError := store.Migrate()
-	if migrationError != nil {
-		log.Fatal().Err(migrationError).Msg("an error occured while migrating the persistance store")
+	migrateErr := store.Migrate()
+	if migrateErr != nil {
+		log.Error().Err(migrateErr).Msg("unable to migrate persistance store")
 	}
 
-	controllerSingleton := controller.New(8080, store)
+	log.Printf("args %+v", os.Args)
 
-	if err := controllerSingleton.Run(); err != nil {
-		log.Fatal().Err(err).Msg("an error occurred when initialising controller")
+	hash, hashErr := auth.HashPassword(os.Args[2])
+	if hashErr != nil {
+		log.Error().Err(hashErr).Msg("unable to hash user password")
+	}
+
+	user := &entity.User{
+		Id:           uuid.NewString(),
+		Username:     os.Args[1],
+		PasswordHash: hash,
+		Role:         controller.ROLE_ADMIN,
+		Zones:        []string{},
+	}
+
+	storeErr := store.CreateUser(user)
+	if storeErr != nil {
+		log.Error().Err(hashErr).Msg("unable to create user")
 	}
 }

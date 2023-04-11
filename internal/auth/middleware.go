@@ -19,3 +19,16 @@ func JWTMiddleware() gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+func HasRole(context *gin.Context, role string) bool {
+	currentUserRole, err := CurrentUserRole(context)
+	if err != nil {
+		return false
+	}
+
+	if currentUserRole == role {
+		return true
+	}
+
+	return false
+}
