@@ -6,9 +6,16 @@ import (
 )
 
 func RESTError(context *gin.Context, code int, message string, err error) {
-	context.JSON(code, entity.RESTError{
-		StatusCode: code,
-		Message:    message,
-		Error:      err.Error(),
-	})
+	if err != nil {
+		context.JSON(code, entity.RESTError{
+			StatusCode: code,
+			Message:    message,
+			Error:      err.Error(),
+		})
+	} else {
+		context.JSON(code, entity.RESTError{
+			StatusCode: code,
+			Message:    message,
+		})
+	}
 }

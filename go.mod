@@ -53,4 +53,5 @@ require (
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 	gorm.io/driver/mysql v1.5.0 // indirect
 	gorm.io/gorm v1.25.0 // indirect
+	gorm.io/plugin/soft_delete v1.2.1 // indirect
 )

@@ -72,6 +72,20 @@ func (s *MariaDBStore) GetUsers() ([]*entity.User, error) {
 	return users, nil
 }
 
+func (s *MariaDBStore) GetUserById(id string) (*entity.User, error) {
+	user := &entity.User{}
+	result := s.connection.First(user, "id = ?", id)
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+		return nil, fmt.Errorf("user not found: %s", result.Error)
+	}
+
+	if result.Error != nil {
+		return nil, fmt.Errorf("unable to query DB for user by id: %s", result.Error)
+	}
+
+	return user, nil
+}
+
 func (s *MariaDBStore) GetUserByUsername(username string) (*entity.User, error) {
 	user := &entity.User{}
 	result := s.connection.First(user, "username = ?", username)
@@ -84,4 +98,16 @@ func (s *MariaDBStore) GetUserByUsername(username string) (*entity.User, error) 
 	}
 
 	return user, nil
+}
+
+func (s *MariaDBStore) SaveUser(user *entity.User) error {
+	result := s.connection.Save(user)
+
+	return result.Error
+}
+
+func (s *MariaDBStore) DeleteUser(id string) error {
+	result := s.connection.Delete(&entity.User{}, "id = ?", id)
+
+	return result.Error
 }

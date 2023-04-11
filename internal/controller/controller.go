@@ -6,10 +6,8 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/monoxane/vxconnect/internal/auth"
-	"github.com/monoxane/vxconnect/internal/entity"
 	"github.com/monoxane/vxconnect/internal/logging"
 	"github.com/monoxane/vxconnect/internal/persistance"
-	"github.com/monoxane/vxconnect/internal/utilities"
 )
 
 type Controller struct {
@@ -53,11 +51,11 @@ func NewRESTServer() *gin.Engine {
 	users := api.Group("/users")
 	users.Use(auth.JWTMiddleware())
 
-	users.GET("/", handleUsers)                    // TODO HANDLE USERS
-	users.GET("/me", NotImplemented)               // TODO HANDLE CURRENT USER
-	users.POST("/new", NotImplemented)             // TODO HANDLE CREATING USER
-	users.PATCH("/:id", NotImplemented)            // TODO HANDLE UPDATING USER
-	users.DELETE("/:id", NotImplemented)           // TODO HANDLE DELETING USER
+	users.GET("", handleUsers)
+	users.GET("/me", NotImplemented) // TODO HANDLE CURRENT USER
+	users.POST("/new", handleNewUser)
+	users.PATCH("/:id", handleUpdateUser)
+	users.DELETE("/:id", handleDeleteUser)         // TODO HANDLE DELETING USER
 	users.POST("/id/zones", NotImplemented)        // TODO HANDLE ASSIGNING A USER A ZONE - NEEDS ADMIN
 	users.DELETE("/:id/zones/:id", NotImplemented) // TODO HANDLE REMOVING A USER ZONE - NEEDS ADMIN
 
@@ -87,66 +85,4 @@ func (c *Controller) Run() error {
 	}
 
 	return fmt.Errorf("REST API interface failed")
-}
-
-func handleAuth(context *gin.Context) {
-	controller.HandleAuth(context)
-}
-
-func (controller *Controller) HandleAuth(context *gin.Context) {
-	payload := &entity.LoginBody{}
-	bindErr := context.BindJSON(payload)
-	if bindErr != nil {
-		utilities.RESTError(context, http.StatusBadRequest, "invalid body", bindErr)
-		return
-	}
-
-	dbUser, userErr := controller.persistance.GetUserByUsername(payload.Username)
-	if userErr != nil {
-		utilities.RESTError(context, http.StatusUnauthorized, "user not found", userErr)
-		return
-	}
-
-	valid := auth.ValidatePassword(dbUser.PasswordHash, payload.Password)
-	if !valid {
-		utilities.RESTError(context, http.StatusUnauthorized, "invalid password", nil)
-		return
-	}
-
-	token, tokenErr := auth.GenerateToken(dbUser.Username, dbUser.Role)
-	if tokenErr != nil {
-		utilities.RESTError(context, http.StatusInternalServerError, "unable to generate token", tokenErr)
-		return
-	}
-
-	resp := entity.LoginResponse{
-		Username: dbUser.Username,
-		Token:    token,
-		Zones:    dbUser.Zones,
-		Role:     dbUser.Role,
-	}
-
-	context.JSON(http.StatusOK, resp)
-}
-
-func handleUsers(context *gin.Context) {
-	controller.HandleUsers(context)
-}
-
-func (controller *Controller) HandleUsers(context *gin.Context) {
-	if !auth.HasRole(context, auth.ROLE_ADMIN) {
-		utilities.RESTError(context, http.StatusUnauthorized, "user does not have permission to access this resource", nil)
-		return
-	}
-
-	users, usersErr := controller.persistance.GetUsers()
-	if usersErr != nil {
-		utilities.RESTError(context, http.StatusInternalServerError, "unable to get users", usersErr)
-		return
-	}
-
-	context.JSON(http.StatusOK, entity.RESTResult{
-		Results:      users,
-		TotalResults: len(users),
-	})
 }
