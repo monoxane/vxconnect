@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func JwtAuthMiddleware() gin.HandlerFunc {
+func JWTMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		err := ValidateToken(c)
 
