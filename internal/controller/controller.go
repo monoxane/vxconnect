@@ -55,8 +55,8 @@ func NewRESTServer() *gin.Engine {
 	users.GET("/me", NotImplemented) // TODO HANDLE CURRENT USER
 	users.POST("/new", handleNewUser)
 	users.PATCH("/:id", handleUpdateUser)
-	users.DELETE("/:id", handleDeleteUser)         // TODO HANDLE DELETING USER
-	users.POST("/id/zones", NotImplemented)        // TODO HANDLE ASSIGNING A USER A ZONE - NEEDS ADMIN
+	users.DELETE("/:id", handleDeleteUser)
+	users.POST("/:id/zones", NotImplemented)       // TODO HANDLE ASSIGNING A USER A ZONE - NEEDS ADMIN
 	users.DELETE("/:id/zones/:id", NotImplemented) // TODO HANDLE REMOVING A USER ZONE - NEEDS ADMIN
 
 	zones := api.Group("/zones")
