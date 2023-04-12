@@ -20,6 +20,7 @@ import Login from "./Login/Login.jsx";
 
 // Dashboard Pages - all protected
 import Dashboard from "./Routes/Dashboard";
+import Zones from './Zones/Zones'
 
 import useAuth from './hooks/useAuth'
 import {AuthProvider} from './context/AuthProvider'
@@ -57,6 +58,9 @@ const App =  function App() {
             <Route path="/" element={<PersistLogin />}>
               <Route element={<RequireAuth allowedRoles={["ADMIN", "ZONE_ADMIN", "OPERATOR"]} />}>
                 <Route path="/" element={<Dashboard />} />
+              </Route>
+              <Route element={<RequireAuth allowedRoles={["ADMIN"]} />}>
+                <Route path="/dns/zones" element={<Zones />} />
               </Route>
               <Route element={<RequireAuth allowedRoles={["NOONEHASTHIS"]} />}>
                 <Route path="/test" element={<Dashboard />} />

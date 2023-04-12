@@ -15,7 +15,7 @@ const Dashboard = function Dashboard() {
       <Column lg={6}>
         <br/><br/><br/>
         <Row>
-          <h2> Your vx0 Network Dashboard</h2>
+          <h2>Your vx0 Network Dashboard</h2>
         </Row><br/>
         <Row>
           <p>Put Things Here</p>
