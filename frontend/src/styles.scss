@@ -1,0 +1,246 @@
+@use '@carbon/react/scss/spacing' as *;
+@use '@carbon/react/scss/theme' as *;
+
+@mixin footer-background() {
+  background-color: $layer-01;
+  position: relative;
+}
+
+.footer {
+  padding-top: $spacing-09;
+  padding-bottom: $spacing-09;
+  padding-left: $spacing-06;
+  @include footer-background;
+}
+
+.h5-inline {
+  display: inline-block;
+  margin-right: $spacing-05;
+}
+
+.header-transparent {
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(10px);
+}
+
+.login-page {
+  background-image: url('https://images.unsplash.com/photo-1676928493523-efd5be5194c1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=4000&q=80');
+  background-size: auto;
+  background-position: center;
+  background-repeat: no-repeat;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+
+  .login-container {
+    max-width: 600px;
+    padding: 4rem;
+    background-color: #fff;
+    border-radius: 0.25rem;
+    box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.2);
+    background-color: rgba(255, 255, 255, 0.9);
+    backdrop-filter: blur(10px);
+
+    //   .login-form {
+    //     margin-right: 2;
+    //   }
+
+
+    .login-title {
+      font-size: 1.5rem;
+      font-weight: bold;
+      margin-bottom: 2rem;
+    }
+
+    .create-account {
+      font-size: 0.875rem;
+      text-align: right;
+      margin-bottom: 1rem;
+
+      a {
+        color: #0f62fe;
+        text-decoration: none;
+
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .username-field {
+      background-color: rgba(255, 255, 255, 0.6);
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .password-field {
+      background-color: rgba(255, 255, 255, 0.6);
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+    }
+
+    .required-fields {
+      font-size: 0.875rem;
+      text-align: center;
+
+      label {
+        display: block;
+        margin-bottom: 0.5rem;
+      }
+
+      .id-filter {
+        margin-top: 0.5rem;
+      }
+
+      .remember-id {
+        display: inline-flex;
+        align-items: right;
+        margin-left: 0.5rem;
+        font-size: 0.875rem;
+
+        input[type="checkbox"] {
+          margin-right: 0.5rem;
+        }
+      }
+
+      .forgot-link {
+        display: inline-block;
+        font-size: 0.875rem;
+        margin-left: 0.5rem;
+        color: #0f62fe;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+
+    .alternative-logins {
+      font-size: 0.875rem;
+      margin-bottom: 1rem;
+
+      .alternative-login-item {
+        display: inline-flex;
+        align-items: center;
+        margin-right: 0.5rem;
+
+        svg {
+          margin-right: 0.25rem;
+        }
+
+        a {
+          color: #0f62fe;
+          text-decoration: none;
+
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+
+    .account-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: left;
+
+    }
+
+    .create-button {
+      margin-top: 1rem;
+    }
+
+    .continue-button {
+      margin-top: 0.5rem;
+      width: 100vw;
+    }
+
+    .continue-arrowright {
+      display: flex;
+      position: absolute;
+      right: 1rem;
+    }
+
+    .need-help {
+      font-size: 0.875rem;
+      margin-top: 1rem;
+
+      a {
+        color: #0f62fe;
+        text-decoration: none;
+
+        &:hover {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+}
+
+.side-nav-collapsed {
+  border-right: 1px solid #dfe3e6;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+}
+
+.side-nav {
+  border-right: 1px solid #dfe3e6;
+  box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.1);
+}
+
+.side-nav-menu-item-active {
+  background-color: #e2efff
+}
+
+.sidebar-pin-container {
+  display: flex;
+  justify-content: left;
+  margin-top: auto;
+  margin-bottom: 20px;
+  margin-left: 1rem;
+}
+
+.sidebar-pin {
+  width: 20px;
+  height: 20px;
+}
+
+.sidebar-menu-item-link {
+  text-decoration: none;
+}
+
+.header-menu-item-link {
+  color: #161616;
+  text-decoration: none;
+  display: flex;
+}
+
+.header-menu-item-active {
+  background-color: #e2efff;
+}
+
+.link-underline {
+  border-bottom-width: 0;
+  background-image: linear-gradient(transparent, transparent), linear-gradient(#000, #000);
+  background-size: 0 3px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size .5s ease-in-out;
+}
+
+.link-underlined {
+  border-bottom-width: 0;
+  background-image: linear-gradient(transparent, transparent), linear-gradient(#000, #000);
+  background-size: 100% 3px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+}
+
+.link-underline:hover {
+  background-size: 100% 3px;
+  background-position: 0 100%
+}
