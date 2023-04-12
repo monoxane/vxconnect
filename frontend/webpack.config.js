@@ -119,6 +119,8 @@ module.exports = (_, argv) => {
       proxy: {
         '/api/v1': {
           target: 'https://connect.vx0.dev',
+          secure: false,
+          changeOrigin: true,
         },
       },
     } : {
