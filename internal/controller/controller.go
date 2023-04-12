@@ -47,7 +47,7 @@ func NewRESTServer() *gin.Engine {
 
 	api := server.Group("/api/v1")
 
-	api.GET("/login", handleAuth)
+	api.POST("/login", handleAuth)
 
 	users := api.Group("/users")
 	users.Use(auth.JWTMiddleware())
