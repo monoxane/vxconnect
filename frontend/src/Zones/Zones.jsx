@@ -1,4 +1,6 @@
 import React, { useState } from "react";
+import {useNavigate} from "react-router-dom"
+
 import useAxiosPrivate, { getAxiosPrivate }  from '../hooks/useAxiosPrivate';
 
 import {
@@ -26,7 +28,7 @@ import {
 } from '@carbon/react'
 
 import {
-  Renew, Add, TrashCan
+  Renew, Add, TrashCan, QueryQueue
 } from '@carbon/icons-react'
 
 import StateManager from "../components/StateManager";
@@ -34,12 +36,12 @@ import StateManager from "../components/StateManager";
 const headers = [
   'Name',
   'Created',
-  'Last Modified',
   'Actions',
 ];
 
 const Zones = function Zones() {
   const axios = getAxiosPrivate()
+  const navigate = useNavigate()
   const [{ data, loading, error }, refresh] = useAxiosPrivate()(
     '/api/v1/zones'
   )
@@ -138,7 +140,6 @@ const Zones = function Zones() {
                   <TableRow key={zone.id}>
                     <TableCell>{zone.name}</TableCell>
                     <TableCell>{zone.created_at}</TableCell>
-                    <TableCell>{zone.updated_at}</TableCell>
                     <TableCell>
                     <StateManager
                       renderLauncher={({ setOpen }) => (
@@ -169,6 +170,13 @@ const Zones = function Zones() {
                         />
                       )}
                     </StateManager>
+                    <Button
+                        renderIcon={QueryQueue}
+                        iconDescription="Records"
+                        hasIconOnly
+                        kind='ghost'
+                        onClick={() => navigate(`/dns/zones/${zone.id}/records`)}
+                      />
                     </TableCell>
                   </TableRow>
                 )}
