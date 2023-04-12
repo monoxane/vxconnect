@@ -6,7 +6,7 @@ import {
 import { SideNavLink } from '@carbon/react'
 
 function CustomSideNavLink ({ label, to, renderIcon }) {
-  const match = useMatch(to);
+  const match = useMatch(to, { exact: false});
   const navigate = useNavigate();
 
   if (match) {

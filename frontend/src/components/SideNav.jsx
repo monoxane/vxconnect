@@ -12,7 +12,7 @@ const SidebarNav = ({ isActive }) => {
       <SideNavItems>
         <SideNavLink to={'/'} label='Dashboard' renderIcon={Dashboard} />
         <SideNavLink to={'/dns/zones'} label='Zones' renderIcon={FolderDetails} />
-        <SideNavLink to={'/dns/records'} label='Records' renderIcon={QueryQueue} />
+        {/* <SideNavLink to={'/dns/records'} label='Records' renderIcon={QueryQueue} /> */}
         <SideNavDivider />
         <SideNavLink to={'/admin/users'} label='Users' renderIcon={UserMultiple} />
       </SideNavItems>

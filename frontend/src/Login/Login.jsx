@@ -12,7 +12,7 @@ import {
   Theme,
   Grid,
   Row,
-  Column,
+  InlineLoading,
   Form,
   FormLabel,
   TextInput,
@@ -119,7 +119,7 @@ const Login = function Login() {
             <Button className="continue-button" kind="primary" tabIndex={0} onClick={handleSubmit}>
               <div>Continue</div>
               <div className="continue-arrowright">
-                <ArrowRight />
+                {loading ? <InlineLoading/> : <ArrowRight />}
               </div>
             </Button>
           </Form>
