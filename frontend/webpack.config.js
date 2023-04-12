@@ -12,7 +12,7 @@ module.exports = (_, argv) => {
 
   return {
     entry: [
-      './src/index.tsx',
+      './src/Index.jsx',
     ],
 
     output: {
@@ -24,7 +24,7 @@ module.exports = (_, argv) => {
     plugins: [
       new MiniCssExtractPlugin(),
       new HtmlWebpackPlugin({
-        title: 'VXConnect',
+        title: 'Connect',
         template: 'src/index.html',
         filename: 'index.html',
       }),
