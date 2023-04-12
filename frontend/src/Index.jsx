@@ -62,6 +62,9 @@ const App =  function App() {
               <Route element={<RequireAuth allowedRoles={["ADMIN"]} />}>
                 <Route path="/dns/zones" element={<Zones />} />
               </Route>
+              <Route element={<RequireAuth allowedRoles={["ADMIN", "ZONE_ADMIN"]} />}>
+                <Route path="/dns/zones/:zoneId" element={<Zones />} />
+              </Route>
               <Route element={<RequireAuth allowedRoles={["NOONEHASTHIS"]} />}>
                 <Route path="/test" element={<Dashboard />} />
               </Route>
