@@ -11,7 +11,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -trimpath -o vxconnect .
+RUN go build -trimpath -o vxconnect ./cmd/vxconnect.go
 
 WORKDIR /dist
 RUN cp /build/vxconnect ./vxconnect
