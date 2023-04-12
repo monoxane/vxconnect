@@ -17,6 +17,8 @@ import {
 import useAuth from '../hooks/useAuth';
 import useLogout from '../hooks/useLogout';
 
+import { useLocation } from 'react-router';
+
 const AppHeader = function Appheader() {
   const { auth } = useAuth();
   const logout = useLogout();
@@ -24,14 +26,14 @@ const AppHeader = function Appheader() {
   return (
     <HeaderContainer
       render={() => (
-        <Header aria-label="page header">
+        <Header aria-label="page header" className={useLocation().pathname === '/login' ? 'header-transparent' : ''}>
           <HeaderName prefix="vx0">
             Connect
           </HeaderName>
           <HeaderGlobalBar>
             {auth?.user && 
               <OverflowMenu flipped renderIcon={UserAvatar} className='cds--header__action'>
-                <OverflowMenuItem itemText="Log out" onClick={logout} />
+                <OverflowMenuItem className="header-user-menu" itemText="Log out" onClick={logout} />
               </OverflowMenu>
             } 
         </HeaderGlobalBar>

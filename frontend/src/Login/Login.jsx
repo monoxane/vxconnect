@@ -87,7 +87,14 @@ const Login = function Login() {
         <div className="login-container">
           <h1 className="login-title">Log in to vx0 Connect</h1>
           <Form className="login-form">
-            <FormLabel htmlFor="username">Username</FormLabel>
+          {errorMessage && (
+              <InlineNotification
+                // title="Unable To Login"
+                subtitle={errorMessage}
+              />
+            )}
+            <br />
+            <FormLabel htmlFor="username" className="username-textabove">Username</FormLabel>
             <TextInput
               id="username"
               className="username-field"
@@ -98,7 +105,7 @@ const Login = function Login() {
               required
               onChange={(e) => setUser(e.target.value)}
             />
-            <FormLabel htmlFor="password">Password</FormLabel>
+            <FormLabel htmlFor="password" className="password-textabove">Password</FormLabel>
             <TextInput
               id="password"
               className="password-field"
@@ -109,12 +116,6 @@ const Login = function Login() {
               labelText={""}
               onChange={(e) => setPass(e.target.value)}
             />
-            {errorMessage && (
-              <InlineNotification
-                // title="Unable To Login"
-                subtitle={errorMessage}
-              />
-            )}
             <Button className="continue-button" kind="primary" tabIndex={0} onClick={handleSubmit}>
               <div>Continue</div>
               <div className="continue-arrowright">
