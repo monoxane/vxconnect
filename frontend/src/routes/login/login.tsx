@@ -16,8 +16,50 @@ import LoginShell from "../../components/loginuishell";
 import { ArrowRight } from "@carbon/icons-react";
 import { Outlet } from "react-router-dom";
 import Footer from "../../components/footer";
+import axios from "axios";
+import e from "express";
+
 
 export default function Login() {
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleLogin = async () => {
+    try {
+      const response = await axios.post("/api/v1/login", { username, password});
+      localStorage.setItem("token", response.data.token);
+      localStorage.setItem("username", JSON.stringify(response.data.username));
+      localStorage.setItem("role", JSON.stringify(response.data.role));
+      window.location.href = "/dash";
+    } catch (error) {
+      setErrorMessage("Invalid username or password.");
+      console.error(error);
+    }
+  }
+
+  
+  const handleSubmit = (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+    if (!username || !password ) {
+      setErrorMessage("Please enter your username and password.");
+     return;
+    }
+    handleLogin();
+    };
+
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === 'Enter') {
+        document.getElementById("password")?.focus();
+      }
+    };
+
+    const handlePasswordKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+      if (e.key === "Enter") {
+        handleSubmit(e);
+      }
+    };
+
   return (
     <>
       <LoginShell />
@@ -33,6 +75,9 @@ export default function Login() {
               type="text"
               placeholder="user@vx0.dev"
               labelText={""}
+              required
+              onKeyDown={handleKeyDown}
+              onChange={(e) => setUsername(e.target.value)}
             />
             <FormLabel htmlFor="password">Password</FormLabel>
             <TextInput
@@ -43,6 +88,8 @@ export default function Login() {
               required
               placeholder="Enter your password"
               labelText={""}
+              onChange={(e) => setPassword(e.target.value)}
+              onKeyDown={handlePasswordKeyDown}
             />
             <div className="required-fields">
               <div className="id-filter">
@@ -53,6 +100,9 @@ export default function Login() {
               </div>
               {/* <a href="#" className="forgot-link">Forgot username or password?</a> */}
             </div>
+            {errorMessage && (
+              <div className="error-message">{errorMessage}</div>
+            )}
             {/* <div className="alternative-logins">
                         <span className="alternative-login-item">
                             <svg
@@ -123,14 +173,13 @@ export default function Login() {
               {/* <Button className="create-button" kind="secondary" tabIndex={0}>
                         Create account
                     </Button> */}
-              <Button className="continue-button" kind="primary" tabIndex={0}>
+              <Button className="continue-button" kind="primary" tabIndex={0} onClick={handleSubmit}>
                 <div>Continue</div>
                 <div className="continue-arrowright">
                   <ArrowRight />
                 </div>
               </Button>
             </div>
-
             <div className="need-help">
               <a href="#">Need help?</a>
             </div>

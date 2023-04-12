@@ -13,7 +13,7 @@ import './styles.scss';
 // Login Pages
 import Login from "./routes/login/login";
 
-// Dashboard Pages
+// Dashboard Pages - all protected
 import Root from "./routes/dash/root";
 import BGPDash from "./routes/dash/bgp";
 import BGPPeers from "./routes/dash/bgp/peers";
