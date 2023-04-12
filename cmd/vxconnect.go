@@ -5,6 +5,7 @@ import (
 
 	"github.com/monoxane/vxconnect/internal/config"
 	"github.com/monoxane/vxconnect/internal/controller"
+	"github.com/monoxane/vxconnect/internal/dns"
 	"github.com/monoxane/vxconnect/internal/logging"
 	"github.com/monoxane/vxconnect/internal/persistance"
 )
@@ -21,6 +22,8 @@ func main() {
 	if !config.Load() {
 		os.Exit(ERR_CONFIG_LOAD_FAILED)
 	}
+
+	forever := make(chan bool)
 
 	logging.Configure()
 
@@ -40,9 +43,11 @@ func main() {
 		log.Fatal().Err(migrationError).Msg("an error occured while migrating the persistance store")
 	}
 
-	controllerSingleton := controller.New(8080, store)
+	dnsService := dns.New()
+	go dnsService.Run()
 
-	if err := controllerSingleton.Run(); err != nil {
-		log.Fatal().Err(err).Msg("an error occurred when initialising controller")
-	}
+	controllerSingleton := controller.New(8080, store)
+	go controllerSingleton.Run()
+
+	<-forever
 }

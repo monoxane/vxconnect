@@ -6,6 +6,7 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/monoxane/vxconnect/internal/auth"
+	"github.com/monoxane/vxconnect/internal/entity"
 	"github.com/monoxane/vxconnect/internal/logging"
 	"github.com/monoxane/vxconnect/internal/persistance"
 )
@@ -78,11 +79,19 @@ func NotImplemented(c *gin.Context) {
 	c.String(http.StatusNotImplemented, "Not Implemented Yet")
 }
 
-func (c *Controller) Run() error {
-	c.log.Info().Msg("starting REST API interface")
-	if err := c.restEngine.Run(fmt.Sprintf("0.0.0.0:%d", c.restPort)); err != nil {
-		return fmt.Errorf("unable to start REST API interface: %s", err)
-	}
+func (c *Controller) Run() {
+	go func() {
+		c.log.Info().Msg("starting REST API interface")
+		if err := c.restEngine.Run(fmt.Sprintf("0.0.0.0:%d", c.restPort)); err != nil {
+			c.log.Fatal().Err(err).Msg("unable to start Controller")
+		}
 
-	return fmt.Errorf("REST API interface failed")
+		c.log.Fatal().Msg("the Controller exited")
+	}()
+}
+
+func QueryRecord(name string) *entity.Record { return controller.QueryRecord(name) }
+func (c *Controller) QueryRecord(name string) *entity.Record {
+	record, _ := c.persistance.GetRecordbyName(name)
+	return record
 }

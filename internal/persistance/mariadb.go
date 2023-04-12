@@ -182,6 +182,17 @@ func (s *MariaDBStore) GetRecordByID(id string) (*entity.Record, error) {
 	return record, nil
 }
 
+func (s *MariaDBStore) GetRecordbyName(name string) (*entity.Record, error) {
+	record := &entity.Record{}
+	result := s.connection.First(&record, "name = ?", name)
+
+	if result.Error != nil {
+		return nil, fmt.Errorf("unable to query DB for zone records: %s", result.Error)
+	}
+
+	return record, nil
+}
+
 func (s *MariaDBStore) CreateRecord(record *entity.Record) error {
 	result := s.connection.Create(record)
 

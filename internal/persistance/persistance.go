@@ -23,6 +23,7 @@ type Store interface {
 
 	GetZoneRecords(zone string) ([]*entity.Record, error)
 	GetRecordByID(id string) (*entity.Record, error)
+	GetRecordbyName(name string) (*entity.Record, error)
 	CreateRecord(record *entity.Record) error
 	SaveRecord(record *entity.Record) error
 	DeleteRecord(id string) error
