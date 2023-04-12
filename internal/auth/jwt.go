@@ -2,7 +2,6 @@ package auth
 
 import (
 	"fmt"
-	"log"
 	"strings"
 	"time"
 
@@ -110,7 +109,6 @@ func CurrentUserRoles(c *gin.Context) ([]string, error) {
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if ok && token.Valid {
-		log.Printf("%+v", claims)
 		roles := []string{}
 		for _, role := range claims["roles"].([]interface{}) {
 			roles = append(roles, role.(string))
