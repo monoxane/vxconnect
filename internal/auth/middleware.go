@@ -21,13 +21,15 @@ func JWTMiddleware() gin.HandlerFunc {
 }
 
 func HasRole(context *gin.Context, role string) bool {
-	currentUserRole, err := CurrentUserRole(context)
+	currentUserRoles, err := CurrentUserRoles(context)
 	if err != nil {
 		return false
 	}
 
-	if currentUserRole == role {
-		return true
+	for _, currentUserRole := range currentUserRoles {
+		if currentUserRole == role {
+			return true
+		}
 	}
 
 	return false

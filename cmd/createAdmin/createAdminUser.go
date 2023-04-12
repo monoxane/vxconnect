@@ -54,7 +54,7 @@ func main() {
 		ID:           uuid.NewString(),
 		Username:     os.Args[1],
 		PasswordHash: hash,
-		Role:         controller.ROLE_ADMIN,
+		Roles:        []string{controller.ROLE_ADMIN},
 		Zones:        []string{},
 	}
 

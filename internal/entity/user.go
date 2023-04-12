@@ -14,7 +14,7 @@ type LoginBody struct {
 type LoginResponse struct {
 	Username string   `json:"username"`
 	Token    string   `json:"token"`
-	Role     string   `json:"role"`
+	Roles    []string `json:"roles"`
 	Zones    []string `json:"zones"`
 }
 
@@ -22,7 +22,7 @@ type User struct {
 	ID           string                `json:"id" gorm:"<-:create"`
 	Username     string                `json:"username" gorm:"unique;<-:create"`
 	PasswordHash string                `json:"-"`
-	Role         string                `json:"role"`
+	Roles        []string              `json:"roles" gorm:"serializer:json"`
 	Zones        []string              `json:"zones" gorm:"serializer:json"`
 	CreatedAt    time.Time             `json:"created_at"`
 	UpdatedAt    time.Time             `json:"updated_at"`

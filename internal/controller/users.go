@@ -36,7 +36,7 @@ func (controller *Controller) HandleAuth(context *gin.Context) {
 		return
 	}
 
-	token, tokenErr := auth.GenerateToken(dbUser.Username, dbUser.Role)
+	token, tokenErr := auth.GenerateToken(dbUser.Username, dbUser.Roles)
 	if tokenErr != nil {
 		utilities.RESTError(context, http.StatusInternalServerError, "unable to generate token", tokenErr)
 		return
@@ -46,7 +46,7 @@ func (controller *Controller) HandleAuth(context *gin.Context) {
 		Username: dbUser.Username,
 		Token:    token,
 		Zones:    dbUser.Zones,
-		Role:     dbUser.Role,
+		Roles:    dbUser.Roles,
 	}
 
 	context.JSON(http.StatusOK, resp)
@@ -91,10 +91,10 @@ func (controller *Controller) HandleNewUser(context *gin.Context) {
 		return
 	}
 
-	if payload.Role != auth.ROLE_ADMIN && payload.Role != auth.ROLE_ZONE_ADMIN {
-		utilities.RESTError(context, http.StatusBadRequest, "invalid role", nil)
-		return
-	}
+	// if payload.Role != auth.ROLE_ADMIN && payload.Role != auth.ROLE_ZONE_ADMIN {
+	// 	utilities.RESTError(context, http.StatusBadRequest, "invalid role", nil)
+	// 	return
+	// }
 
 	hash, hashErr := auth.HashPassword(payload.Password)
 	if hashErr != nil {
@@ -110,7 +110,7 @@ func (controller *Controller) HandleNewUser(context *gin.Context) {
 		ID:           uuid.NewString(),
 		Username:     payload.Username,
 		PasswordHash: hash,
-		Role:         payload.Role,
+		Roles:        payload.Roles,
 		Zones:        payload.Zones,
 	}
 

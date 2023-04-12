@@ -58,7 +58,7 @@ const Login = function Login() {
       const accessToken = response?.data?.token;
       
       setAuth({
-        user, roles: [response?.data?.role], accessToken,
+        user, roles: response?.data?.roles, accessToken,
       });
       setUser('');
       setPass('');

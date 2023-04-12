@@ -2,6 +2,7 @@ package auth
 
 import (
 	"fmt"
+	"log"
 	"strings"
 	"time"
 
@@ -10,10 +11,10 @@ import (
 	"github.com/monoxane/vxconnect/internal/config"
 )
 
-func GenerateToken(username, role string) (string, error) {
+func GenerateToken(username string, roles []string) (string, error) {
 	claims := jwt.MapClaims{}
 	claims["username"] = username
-	claims["role"] = role
+	claims["roles"] = roles
 	claims["exp"] = time.Now().Add(time.Hour * time.Duration(token_lifespan)).Unix()
 	claims["issuer"] = issuer
 
@@ -92,7 +93,7 @@ func CurrentUser(c *gin.Context) (string, error) {
 	return "", nil
 }
 
-func CurrentUserRole(c *gin.Context) (string, error) {
+func CurrentUserRoles(c *gin.Context) ([]string, error) {
 	tokenString := ExtractToken(c)
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
@@ -104,13 +105,18 @@ func CurrentUserRole(c *gin.Context) (string, error) {
 	})
 
 	if err != nil {
-		return "", err
+		return nil, err
 	}
 
 	claims, ok := token.Claims.(jwt.MapClaims)
 	if ok && token.Valid {
-		return claims["role"].(string), nil
+		log.Printf("%+v", claims)
+		roles := []string{}
+		for _, role := range claims["roles"].([]interface{}) {
+			roles = append(roles, role.(string))
+		}
+		return roles, nil
 	}
 
-	return "", nil
+	return nil, nil
 }
