@@ -40,9 +40,9 @@ import {
 import StateManager from "../components/StateManager";
 
 const headers = [
-  'Name',
-  'Created',
-  'Actions',
+  { label: 'Name', key: 'name', sortable: true },
+  { label: 'Created', key: 'created_at', sortable: true },
+  { label: 'Actions', key: 'actions', sortable: false }
 ];
 
 const Zones = function Zones() {
@@ -59,6 +59,8 @@ const Zones = function Zones() {
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(20);
   const [searchQuery, setSearchQuery] = useState("");
+  const [sortOrder, setSortOrder] = useState('asc');
+  const [sortField, setSortField] = useState('name');
 
   if (error) return error.Message
   if (loading & !data) return <InlineLoading />
@@ -97,6 +99,16 @@ const Zones = function Zones() {
     const response = axios.delete(`/api/v1/zones/${id}`)
     console.log(response)
   }
+
+  const handleSort = (field) => {
+    setSortField(field);
+    setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+  };
+
+  const sortedData = data.results.sort((a, b) => {
+    const compare = a[sortField].localeCompare(b[sortField]);
+    return sortOrder === 'asc' ? compare : -compare;
+  });
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
@@ -152,7 +164,6 @@ const Zones = function Zones() {
                       {newZoneError && (
                         <InlineNotification
                           title={newZoneError}
-                          // lowcontrast
                           kind="error"
                           lowContrast
                         />
@@ -164,32 +175,17 @@ const Zones = function Zones() {
                 </StateManager>
               </TableToolbarContent>
             </TableToolbar>
-            <TableToolbar
-              aria-label='data table toolbar'>
-              {loading && <InlineLoading />}
-              <TableToolbarContent>
-                <Pagination
-                  backwardText="Previous page"
-                  forwardText="Next page"
-                  itemsPerPageText="Items per page:"
-                  pageNumberText="Page Number"
-                  onChange={({ page, pageSize }) => {
-                    setCurrentPage(page);
-                    setItemsPerPage(pageSize);
-                  }}
-                  page={currentPage}
-                  pageSize={itemsPerPage}
-                  pageSizes={[10, 20, 30, 40, 50]}
-                  totalItems={data.results.length}
-                />
-              </TableToolbarContent>
-            </TableToolbar>
             <Table size="lg" useZebraStyles={false}>
               <TableHead>
                 <TableRow>
                   {headers.map((header) => (
-                    <TableHeader id={header.key} key={header}>
-                      {header}
+                    <TableHeader
+                      id={header.key}
+                      key={header}
+                      isSortable={header.sortable}
+                      onClick={() => handleSort(header.key)}
+                    >
+                      {header.label}
                     </TableHeader>
                   ))}
                 </TableRow>
@@ -197,9 +193,7 @@ const Zones = function Zones() {
               <TableBody>
                 {filteredItems
                   .slice(indexOfFirstItem, indexOfLastItem)
-                  .sort((a, b) => a.id.localeCompare(b.id))
                   .map((zone) => (
-
                     <TableRow key={zone.id}>
                       <TableCell>{zone.name}</TableCell>
                       <TableCell>{zone.created_at}</TableCell>
@@ -262,6 +256,26 @@ const Zones = function Zones() {
                   ))}
               </TableBody>
             </Table>
+            <TableToolbar
+              aria-label='data table toolbar'>
+              {loading && <InlineLoading />}
+              <TableToolbarContent>
+                <Pagination
+                  backwardText="Previous page"
+                  forwardText="Next page"
+                  itemsPerPageText="Items per page:"
+                  pageNumberText="Page Number"
+                  onChange={({ page, pageSize }) => {
+                    setCurrentPage(page);
+                    setItemsPerPage(pageSize);
+                  }}
+                  page={currentPage}
+                  pageSize={itemsPerPage}
+                  pageSizes={[10, 20, 30, 40, 50]}
+                  totalItems={data.results.length}
+                />
+              </TableToolbarContent>
+            </TableToolbar>
           </TableContainer>
         </Row>
       </Column>
