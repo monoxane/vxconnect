@@ -19,8 +19,9 @@ import SideNav from './components/SideNav'
 import Login from "./Login/Login.jsx";
 
 // Dashboard Pages - all protected
-import Dashboard from "./Routes/Dashboard";
+import Dashboard from "./routes/Dashboard";
 import Zones from './Zones/Zones'
+import Records from "./Zones/Records";
 
 import useAuth from './hooks/useAuth'
 import {AuthProvider} from './context/AuthProvider'
@@ -63,8 +64,12 @@ const App =  function App() {
                 <Route exact path="/dns/zones" element={<Zones />} />
               </Route>
               <Route element={<RequireAuth allowedRoles={["ADMIN", "ZONE_ADMIN"]} />}>
-                <Route exact path="/dns/zones/:zoneId/records" element={<Zones />} />
+                <Route exact path="/dns/records/:zoneId" element={<Records />} />
               </Route>
+              <Route element={<RequireAuth allowedRoles={["ADMIN", "ZONE_ADMIN"]} />}>
+                <Route exact path="/dns/zones/:zoneId/records" element={<Records />} />
+              </Route>
+              {/* MAYBE: redirect /dns/zones/:zoneId to /dns/zone/:zoneId */}
               <Route element={<RequireAuth allowedRoles={["NOONEHASTHIS"]} />}>
                 <Route path="/test" element={<Dashboard />} />
               </Route>

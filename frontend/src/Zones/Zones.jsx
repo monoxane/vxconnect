@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom"
+import { useNavigate, Link } from "react-router-dom"
 
 import useAxiosPrivate, { getAxiosPrivate } from '../hooks/useAxiosPrivate';
 
@@ -30,7 +30,9 @@ import {
   Checkbox,
   Pagination,
   Search,
-  ExpandableSearch
+  ExpandableSearch,
+  Breadcrumb,
+  BreadcrumbItem
 } from '@carbon/react'
 
 import {
@@ -84,6 +86,7 @@ const Zones = function Zones() {
             headers: { 'Content-Type': 'application/json' }
           },
         );
+        // console.log(response)
         setNewZoneError("");
         handleCloseModal(setOpen);
       } catch (error) {
@@ -117,169 +120,169 @@ const Zones = function Zones() {
   );
 
   return (
-    <Grid>
-      <Column lg={16}>
-        <Row>
-          <TableContainer
-            title='Zones'
-          >
-            <TableToolbar aria-label='data table toolbar'>
-              {loading && <InlineLoading />}
-              <TableToolbarContent>
-                <Search
-                  label="Search"
-                  value={searchQuery}
-                  onChange={(event) => setSearchQuery(event.target.value)}
-                />
-                <Button renderIcon={Renew} hasIconOnly kind='secondary' iconDescription='Refresh' onClick={refresh}>Refresh Zones</Button>
-                <StateManager
-                  renderLauncher={({ setOpen }) => (
-                    <Button renderIcon={Add} kind="primary" iconDescription="New Zone" onClick={() => setOpen(true)}>New Zone</Button>)}>
-                  {({ open, setOpen }) => (
-                    <Modal
-                      modalLabel="DNS/Zones"
-                      modalHeading="New Zone"
-                      primaryButtonText={newZoneLoading ? "Creating" : "Create"}
-                      secondaryButtonText="Cancel"
-                      open={open}
-                      shouldSubmitOnEnter
-                      onRequestSubmit={() => modelAddSubmit(setOpen)}
-                      onRequestClose={() => handleCloseModal(setOpen)}>
-                      <p style={{ marginBottom: '1rem' }}>
-                        Create a new Zone to be managed by Connect
-                      </p>
-                      <TextInput
-                        data-modal-primary-focus
-                        id="zoneName"
-                        labelText="Zone name"
-                        placeholder="zone.vx0"
-                        style={{ marginBottom: '1rem' }}
-                        value={newZoneName}
-                        onChange={(event) => setNewZoneName(event.target.value)}
-                      />
-                      {/* TODO: IMPLEMENT ALLOCATION TO USER */}
-                      {/* <Select id="select-1" labelText="User">
-                      <SelectItem value="all" text="All" /> 
-                    </Select> */}
-                      {newZoneError && (
-                        <InlineNotification
-                          title={newZoneError}
-                          kind="error"
-                          lowContrast
-                        />
-                      )}
-                      <br />
+    <>
+      <Breadcrumb>
+        <BreadcrumbItem>DNS</BreadcrumbItem>
+        <BreadcrumbItem>
+          <Link to="/dns/zones">Zones</Link>
+        </BreadcrumbItem>
+      </Breadcrumb>
+      <br />
+      <br />
+      <Grid>
+        <Column lg={16}>
+          <Row>
+            <TableContainer
+              title='Zones'
+            >
+              <TableToolbar aria-label='data table toolbar'>
+                {loading && <InlineLoading />}
+                <TableToolbarContent>
+                  <Search
+                    label="Search"
+                    value={searchQuery}
+                    onChange={(event) => setSearchQuery(event.target.value)} />
+                  <Button renderIcon={Renew} hasIconOnly kind='secondary' iconDescription='Refresh' onClick={refresh}>Refresh Zones</Button>
+                  <StateManager
+                    renderLauncher={({ setOpen }) => (
+                      <Button renderIcon={Add} kind="primary" iconDescription="New Zone" onClick={() => setOpen(true)}>New Zone</Button>)}>
+                    {({ open, setOpen }) => (
+                      <Modal
+                        modalLabel="DNS/Zones"
+                        modalHeading="New Zone"
+                        primaryButtonText={newZoneLoading ? "Creating" : "Create"}
+                        secondaryButtonText="Cancel"
+                        open={open}
+                        shouldSubmitOnEnter
+                        onRequestSubmit={() => modelAddSubmit(setOpen)}
+                        onRequestClose={() => handleCloseModal(setOpen)}>
+                        <p style={{ marginBottom: '1rem' }}>
+                          Create a new Zone to be managed by Connect
+                        </p>
+                        <TextInput
+                          data-modal-primary-focus
+                          id="zoneName"
+                          labelText="Zone name"
+                          placeholder="zone.vx0"
+                          style={{ marginBottom: '1rem' }}
+                          value={newZoneName}
+                          onChange={(event) => setNewZoneName(event.target.value)} />
+                        {/* TODO: IMPLEMENT ALLOCATION TO USER */}
+                        {/* <Select id="select-1" labelText="User">
+            <SelectItem value="all" text="All" />
+          </Select> */}
+                        {newZoneError && (
+                          <InlineNotification
+                            title={newZoneError}
+                            kind="error"
+                            lowContrast />
+                        )}
+                        <br />
 
-                    </Modal>
-                  )}
-                </StateManager>
-              </TableToolbarContent>
-            </TableToolbar>
-            <Table size="lg" useZebraStyles={false}>
-              <TableHead>
-                <TableRow>
-                  {headers.map((header) => (
-                    <TableHeader
-                      id={header.key}
-                      key={header}
-                      isSortable={header.sortable}
-                      onClick={() => handleSort(header.key)}
-                    >
-                      {header.label}
-                    </TableHeader>
-                  ))}
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {filteredItems
-                  .slice(indexOfFirstItem, indexOfLastItem)
-                  .map((zone) => (
-                    <TableRow key={zone.id}>
-                      <TableCell>{zone.name}</TableCell>
-                      <TableCell>{zone.created_at}</TableCell>
-                      <TableCell>
-                        <StateManager
-                          renderLauncher={({ setOpen }) => (
-                            <Button
-                              renderIcon={TrashCan}
-                              iconDescription="Delete"
-                              hasIconOnly
-                              kind='ghost'
-                              onClick={() => setOpen(true)}
-                            />
-                          )}>
-                          {({ open, setOpen }) => (
-                            <Modal
-                              open={open}
-                              onRequestClose={() => {
-                                setOpen(false);
-                                setDeleteConfirmed(false)
-                              }}
-                              onRequestSubmit={() => {
-                                if (deleteConfirmed) {
-                                  modalDeleteSubmit(zone.id);
-                                  setTimeout(() => {
-                                    refresh();
-                                    setOpen(false);
-                                    setDeleteConfirmed(false);
-                                  }, 500);
-                                }
-                              }}
-                              danger
-                              modalHeading={`Are you sure you want to delete zone ${zone.name}?`}
-                              modalLabel="DNS/Zones"
-                              primaryButtonText="Delete"
-                              secondaryButtonText="Cancel"
-                              primaryButtonDisabled={!deleteConfirmed}
-                            >
-                              <Checkbox
-                                labelText="I confirm that I want to delete this zone and understand it cannot be recreated."
-                                id="deleteConfirmCheckbox"
-                                checked={deleteConfirmed}
-                                onChange={(event) =>
-                                  setDeleteConfirmed(event.target.checked)
-                                }
-                              />
-                            </Modal>
-
-                          )}
-                        </StateManager>
-                        <Button
-                          renderIcon={QueryQueue}
-                          iconDescription="Records"
-                          hasIconOnly
-                          kind='ghost'
-                          onClick={() => navigate(`/dns/zones/${zone.id}/records`)}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-              </TableBody>
-            </Table>
-            <TableToolbar
-              aria-label='data table toolbar'>
-              {loading && <InlineLoading />}
-              <TableToolbarContent>
-                <Pagination
-                  backwardText="Previous page"
-                  forwardText="Next page"
-                  itemsPerPageText="Items per page:"
-                  pageNumberText="Page Number"
-                  onChange={({ page, pageSize }) => {
-                    setCurrentPage(page);
-                    setItemsPerPage(pageSize);
-                  }}
-                  page={currentPage}
-                  pageSize={itemsPerPage}
-                  pageSizes={[10, 20, 30, 40, 50]}
-                  totalItems={data.results.length}
-                />
-              </TableToolbarContent>
-            </TableToolbar>
-          </TableContainer>
-        </Row>
-      </Column>
-    </Grid>
+                      </Modal>
+                    )}
+                  </StateManager>
+                </TableToolbarContent>
+              </TableToolbar>
+              <Table size="lg" useZebraStyles={false}>
+                <TableHead>
+                  <TableRow>
+                    {headers.map((header) => (
+                      <TableHeader
+                        id={header.key}
+                        key={header}
+                        isSortable={header.sortable}
+                        onClick={() => handleSort(header.key)}
+                      >
+                        {header.label}
+                      </TableHeader>
+                    ))}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {filteredItems
+                    .slice(indexOfFirstItem, indexOfLastItem)
+                    .map((zone) => (
+                      <TableRow key={zone.id}>
+                        <TableCell>{zone.name}</TableCell>
+                        <TableCell>{zone.created_at}</TableCell>
+                        <TableCell>
+                          <StateManager
+                            renderLauncher={({ setOpen }) => (
+                              <Button
+                                renderIcon={TrashCan}
+                                iconDescription="Delete"
+                                hasIconOnly
+                                kind='ghost'
+                                onClick={() => setOpen(true)} />
+                            )}>
+                            {({ open, setOpen }) => (
+                              <Modal
+                                open={open}
+                                onRequestClose={() => {
+                                  setOpen(false);
+                                  setDeleteConfirmed(false);
+                                }}
+                                onRequestSubmit={() => {
+                                  if (deleteConfirmed) {
+                                    modalDeleteSubmit(zone.id);
+                                    setTimeout(() => {
+                                      refresh();
+                                      setOpen(false);
+                                      setDeleteConfirmed(false);
+                                    }, 500);
+                                  }
+                                }}
+                                danger
+                                modalHeading={`Are you sure you want to delete zone ${zone.name}?`}
+                                modalLabel="DNS/Zones"
+                                primaryButtonText="Delete"
+                                secondaryButtonText="Cancel"
+                                primaryButtonDisabled={!deleteConfirmed}
+                              >
+                                <Checkbox
+                                  // labelText={`I confirm that I want to delete this zone and associated records. ${<Link to={`/dns/zones/${zone.id}/records"}?`}>View Records</Link>}`}
+                                  labelText={`I confirm that I want to delete this zone and associated records.`}
+                                  id="deleteConfirmCheckbox"
+                                  checked={deleteConfirmed}
+                                  onChange={(event) => setDeleteConfirmed(event.target.checked)} />
+                              </Modal>
+                            )}
+                          </StateManager>
+                          <Button
+                            renderIcon={QueryQueue}
+                            iconDescription="Records"
+                            hasIconOnly
+                            kind='ghost'
+                            onClick={() => navigate(`/dns/zones/${zone.id}/records`)} />
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                </TableBody>
+              </Table>
+              <TableToolbar
+                aria-label='data table toolbar'>
+                {loading && <InlineLoading />}
+                <TableToolbarContent>
+                  <Pagination
+                    backwardText="Previous page"
+                    forwardText="Next page"
+                    itemsPerPageText="Items per page:"
+                    pageNumberText="Page Number"
+                    onChange={({ page, pageSize }) => {
+                      setCurrentPage(page);
+                      setItemsPerPage(pageSize);
+                    }}
+                    page={currentPage}
+                    pageSize={itemsPerPage}
+                    pageSizes={[10, 20, 30, 40, 50]}
+                    totalItems={data.results.length} />
+                </TableToolbarContent>
+              </TableToolbar>
+            </TableContainer>
+          </Row>
+        </Column>
+      </Grid></>
   )
 }
 
