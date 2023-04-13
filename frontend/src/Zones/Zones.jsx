@@ -27,11 +27,14 @@ import {
   SelectItem,
   InlineNotification,
   Theme,
-  Checkbox
+  Checkbox,
+  Pagination,
+  Search,
+  ExpandableSearch
 } from '@carbon/react'
 
 import {
-  Renew, Add, TrashCan, QueryQueue
+  Renew, Add, TrashCan, QueryQueue, CaretDown, CaretUp
 } from '@carbon/icons-react'
 
 import StateManager from "../components/StateManager";
@@ -53,6 +56,9 @@ const Zones = function Zones() {
   const [newZoneLoading, setNewZoneLoading] = useState(false)
   const [newZoneError, setNewZoneError] = useState("");
   const [deleteConfirmed, setDeleteConfirmed] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(20);
+  const [searchQuery, setSearchQuery] = useState("");
 
   if (error) return error.Message
   if (loading & !data) return <InlineLoading />
@@ -92,6 +98,12 @@ const Zones = function Zones() {
     console.log(response)
   }
 
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const filteredItems = data.results.filter((item) =>
+    item.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
   return (
     <Grid>
       <Column lg={16}>
@@ -102,6 +114,11 @@ const Zones = function Zones() {
             <TableToolbar aria-label='data table toolbar'>
               {loading && <InlineLoading />}
               <TableToolbarContent>
+                <Search
+                  label="Search"
+                  value={searchQuery}
+                  onChange={(event) => setSearchQuery(event.target.value)}
+                />
                 <Button renderIcon={Renew} hasIconOnly kind='secondary' iconDescription='Refresh' onClick={refresh}>Refresh Zones</Button>
                 <StateManager
                   renderLauncher={({ setOpen }) => (
@@ -147,6 +164,26 @@ const Zones = function Zones() {
                 </StateManager>
               </TableToolbarContent>
             </TableToolbar>
+            <TableToolbar
+              aria-label='data table toolbar'>
+              {loading && <InlineLoading />}
+              <TableToolbarContent>
+                <Pagination
+                  backwardText="Previous page"
+                  forwardText="Next page"
+                  itemsPerPageText="Items per page:"
+                  pageNumberText="Page Number"
+                  onChange={({ page, pageSize }) => {
+                    setCurrentPage(page);
+                    setItemsPerPage(pageSize);
+                  }}
+                  page={currentPage}
+                  pageSize={itemsPerPage}
+                  pageSizes={[10, 20, 30, 40, 50]}
+                  totalItems={data.results.length}
+                />
+              </TableToolbarContent>
+            </TableToolbar>
             <Table size="lg" useZebraStyles={false}>
               <TableHead>
                 <TableRow>
@@ -158,67 +195,71 @@ const Zones = function Zones() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {data.results.sort((a, b) => a.id.localeCompare(b.id)).map((zone) =>
-                  <TableRow key={zone.id}>
-                    <TableCell>{zone.name}</TableCell>
-                    <TableCell>{zone.created_at}</TableCell>
-                    <TableCell>
-                      <StateManager
-                        renderLauncher={({ setOpen }) => (
-                          <Button
-                            renderIcon={TrashCan}
-                            iconDescription="Delete"
-                            hasIconOnly
-                            kind='ghost'
-                            onClick={() => setOpen(true)}
-                          />
-                        )}>
-                        {({ open, setOpen }) => (
-                          <Modal
-                            open={open}
-                            onRequestClose={() => {
-                              setOpen(false);
-                              setDeleteConfirmed(false)
-                            }}
-                            onRequestSubmit={() => {
-                              if (deleteConfirmed) {
-                                modalDeleteSubmit(zone.id);
-                                setTimeout(() => {
-                                  refresh();
-                                  setOpen(false);
-                                  setDeleteConfirmed(false);
-                                }, 500);
-                              }
-                            }}
-                            danger
-                            modalHeading={`Are you sure you want to delete zone ${zone.name}?`}
-                            modalLabel="DNS/Zones"
-                            primaryButtonText="Delete"
-                            secondaryButtonText="Cancel"
-                            primaryButtonDisabled={!deleteConfirmed}
-                          >
-                            <Checkbox
-                              labelText="I confirm that I want to delete this zone and understand it cannot be recreated."
-                              id="deleteConfirmCheckbox"
-                              checked={deleteConfirmed}
-                              onChange={(event) =>
-                                setDeleteConfirmed(event.target.checked)
-                              }
-                            />
-                          </Modal>
+                {filteredItems
+                  .slice(indexOfFirstItem, indexOfLastItem)
+                  .sort((a, b) => a.id.localeCompare(b.id))
+                  .map((zone) => (
 
-                        )}
-                      </StateManager>
-                      <Button
-                        renderIcon={QueryQueue}
-                        iconDescription="Records"
-                        hasIconOnly
-                        kind='ghost'
-                        onClick={() => navigate(`/dns/zones/${zone.id}/records`)}
-                      />
-                    </TableCell>
-                  </TableRow>
-                )}
+                    <TableRow key={zone.id}>
+                      <TableCell>{zone.name}</TableCell>
+                      <TableCell>{zone.created_at}</TableCell>
+                      <TableCell>
+                        <StateManager
+                          renderLauncher={({ setOpen }) => (
+                            <Button
+                              renderIcon={TrashCan}
+                              iconDescription="Delete"
+                              hasIconOnly
+                              kind='ghost'
+                              onClick={() => setOpen(true)}
+                            />
+                          )}>
+                          {({ open, setOpen }) => (
+                            <Modal
+                              open={open}
+                              onRequestClose={() => {
+                                setOpen(false);
+                                setDeleteConfirmed(false)
+                              }}
+                              onRequestSubmit={() => {
+                                if (deleteConfirmed) {
+                                  modalDeleteSubmit(zone.id);
+                                  setTimeout(() => {
+                                    refresh();
+                                    setOpen(false);
+                                    setDeleteConfirmed(false);
+                                  }, 500);
+                                }
+                              }}
+                              danger
+                              modalHeading={`Are you sure you want to delete zone ${zone.name}?`}
+                              modalLabel="DNS/Zones"
+                              primaryButtonText="Delete"
+                              secondaryButtonText="Cancel"
+                              primaryButtonDisabled={!deleteConfirmed}
+                            >
+                              <Checkbox
+                                labelText="I confirm that I want to delete this zone and understand it cannot be recreated."
+                                id="deleteConfirmCheckbox"
+                                checked={deleteConfirmed}
+                                onChange={(event) =>
+                                  setDeleteConfirmed(event.target.checked)
+                                }
+                              />
+                            </Modal>
+
+                          )}
+                        </StateManager>
+                        <Button
+                          renderIcon={QueryQueue}
+                          iconDescription="Records"
+                          hasIconOnly
+                          kind='ghost'
+                          onClick={() => navigate(`/dns/zones/${zone.id}/records`)}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>
