@@ -3,7 +3,8 @@ import ReactDOM from "react-dom/client";
 import {
   BrowserRouter,
   Route,
-  Routes
+  Routes,
+  useLocation
 } from "react-router-dom";
 import "./index.scss";
 import './styles.scss';
@@ -47,6 +48,10 @@ const AppWrapper = function AppWrapper() {
 
 const App =  function App() {
   const { auth } = useAuth();
+  const location = useLocation();
+  // const title = location.pathname.split('/')[1] || 'Dashboard';
+  const title = location.pathname.split('/').reverse()[0] || 'Dashboard';
+  document.title = `${title.charAt(0).toUpperCase() + title.slice(1)}` + ' | Connect';
 
   return (
     <Suspense fallback={(<>Loading Content</>)} >

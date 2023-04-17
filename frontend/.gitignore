@@ -13,7 +13,7 @@
 .cache/
 coverage/
 dist/*
-!dist/index.html
+# !dist/index.html
 node_modules/
 *.log
 *.env
