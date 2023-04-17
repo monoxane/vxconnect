@@ -288,3 +288,22 @@
   color: #fff;
   border-radius: 0.25rem;
 }
+
+.table-refresh-button {
+  position: relative;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 4em;
+  color: #fff;
+}
+
+.table-loading-spinner {
+  display: inline-flex;
+  position: absolute;
+  left: 0.25em;
+  padding: auto;
+  margin: auto;
+  justify-content: center;
+  align-items: center;
+}

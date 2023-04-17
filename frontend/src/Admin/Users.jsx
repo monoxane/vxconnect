@@ -124,100 +124,119 @@ const Users = function Users() {
     const sortedData = data.results.sort((a, b) => {
         const compare = a[sortField].localeCompare(b[sortField]);
         return sortOrder === 'asc' ? compare : -compare;
-      });
+    });
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const filteredItems = data.results.filter((item) =>
-      item.username.toLowerCase().includes(searchQuery.toLowerCase())
+        item.username.toLowerCase().includes(searchQuery.toLowerCase())
     );
     return (
         <>
-        <Breadcrumb>
-            <BreadcrumbItem>
-            <Link to="/admin">Admin</Link>
-          </BreadcrumbItem>
-          <BreadcrumbItem>
-            <Link to="/admin/users">Users</Link>
-          </BreadcrumbItem>
-        </Breadcrumb>
-        <br />
-        <br />
-        <Grid>
-          <Column lg={16}>
-            <TableContainer>
-                <TableToolbar>
-                    <TableToolbarContent>
-                        <Search
-                            id="search-1"
-                            placeHolderText="Search"
-                            labelText="Search"
-                            onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                        <Button
-                            renderIcon={Add}
-                            iconDescription="Add"
-                            onClick={() => navigate('/admin/users/create')}
-                        >
-                            Add
-                        </Button>
-                    </TableToolbarContent>
-                </TableToolbar>
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableSelectAll />
-                            {headers.map((header) => (
-                                <TableHeader
-                                    key={header.key}
-                                    isSortable={header.sortable}
-                                    onClick={() => handleSort(header.key)}
-                                    sortDirection={sortField === header.key ? sortOrder : 'none'}
+            <Breadcrumb>
+                <BreadcrumbItem>
+                    <Link to="/admin">Admin</Link>
+                </BreadcrumbItem>
+                <BreadcrumbItem>
+                    <Link to="/admin/users">Users</Link>
+                </BreadcrumbItem>
+            </Breadcrumb>
+            <br />
+            <br />
+            <Grid>
+                <Column lg={16}>
+                    <TableContainer title="Users">
+                        <TableToolbar>
+                            <TableToolbarContent>
+                                <Search
+                                    id="search-1"
+                                    placeHolderText="Search"
+                                    labelText="Search"
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                />
+                                <Button
+                                    hasIconOnly
+                                    kind="secondary"
+                                    iconDescription='Refresh'
+                                    className="table-refresh-button"
+                                    onClick={() => refresh()}
                                 >
-                                    {header.header}
-                                </TableHeader>
-                            ))}
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        {filteredItems.slice(indexOfFirstItem, indexOfLastItem).map((row) => (
-                            <TableRow key={row.id}>
-                                <TableSelectRow />
-                                <TableCell>{row.username}</TableCell>
-                                <TableCell><CodeSnippet type="single" feedback="Copied">{row.id}</CodeSnippet></TableCell>
-                                <TableCell>
-                                    {row.roles.map((role) => (  
-                                        <Tag type={roleColours.find((colour) => colour.role === role).colour} key={role}>{role}</Tag>
+                                    {loading && <InlineLoading
+                                        status="active"
+                                        small
+                                        className="table-loading-spinner"
+                                    />}
+                                    {!loading && <Renew />}
+                                </Button>
+                                <Button
+                                    renderIcon={Add}
+                                    iconDescription="Add"
+                                    onClick={() => navigate('/admin/users/create')}
+                                >
+                                    Add
+                                </Button>
+                            </TableToolbarContent>
+                        </TableToolbar>
+                        <Table>
+                            <TableHead>
+                                <TableRow>
+                                    <TableSelectAll />
+                                    {headers.map((header) => (
+                                        <TableHeader
+                                            key={header.key}
+                                            isSortable={header.sortable}
+                                            onClick={() => handleSort(header.key)}
+                                            sortDirection={sortField === header.key ? sortOrder : 'none'}
+                                        >
+                                            {header.header}
+                                        </TableHeader>
                                     ))}
-                                </TableCell>
-                                <TableCell>{row.zones.join(', ')}</TableCell>
-                                <TableCell>{row.created_at}</TableCell>
-                                <TableCell>{row.updated_at}</TableCell>
-                            </TableRow>
-                        ))}
-                    </TableBody>
-                </Table>
-                <TableToolbar>
-                    <TableToolbarContent>
-                        <Pagination
-                            backwardText="Previous page"
-                            forwardText="Next page"
-                            itemsPerPageText="Items per page:"
-                            pageNumberText="Page Number"
-                            onChange={({ page, pageSize }) => {
-                                setCurrentPage(page);
-                                setItemsPerPage(pageSize);
-                            }}
-                            page={currentPage}
-                            pageSize={itemsPerPage}
-                            pageSizes={[10, 20, 30, 40, 50]}
-                            totalItems={filteredItems.length}
-                        />
-                    </TableToolbarContent>
-                </TableToolbar>
-            </TableContainer>
-            </Column>
-        </Grid>
-            </>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
+                                {filteredItems.slice(indexOfFirstItem, indexOfLastItem).map((row) => (
+                                    <TableRow key={row.id}>
+                                        <TableSelectRow />
+                                        <TableCell>{row.username}</TableCell>
+                                        <TableCell><CodeSnippet type="single" feedback="Copied">{row.id}</CodeSnippet></TableCell>
+                                        <TableCell>
+                                            {row.roles.map((role) => (
+                                                <Tag type={roleColours.find((colour) => colour.role === role).colour} key={role}>{role}</Tag>
+                                            ))}
+                                        </TableCell>
+                                        <TableCell>{row.zones.join(', ')}</TableCell>
+                                        <TableCell>{row.created_at}</TableCell>
+                                        <TableCell>{row.updated_at}</TableCell>
+                                    </TableRow>
+                                ))}
+                            </TableBody>
+                        </Table>
+                        <TableToolbar>
+                            <TableToolbarContent>
+                                <Pagination
+                                    backwardText="Previous page"
+                                    forwardText="Next page"
+                                    itemsPerPageText="Items per page:"
+                                    pageNumberText="Page Number"
+                                    onChange={({ page, pageSize }) => {
+                                        setCurrentPage(page);
+                                        setItemsPerPage(pageSize);
+                                    }}
+                                    page={currentPage}
+                                    pageSize={itemsPerPage}
+                                    pageSizes={[10, 20, 30, 40, 50]}
+                                    totalItems={filteredItems.length}
+                                />
+                            </TableToolbarContent>
+                        </TableToolbar>
+                    </TableContainer>
+                    {loading && <InlineLoading
+                        description="Refreshing..."
+                        status="active"
+                        small
+                    />}
+                </Column>
+            </Grid>
+        </>
     )
 }
 

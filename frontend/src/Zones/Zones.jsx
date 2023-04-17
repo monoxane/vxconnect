@@ -182,7 +182,20 @@ const Zones = function Zones() {
                     label="Search"
                     value={searchQuery}
                     onChange={(event) => setSearchQuery(event.target.value)} />
-                  <Button renderIcon={Renew} hasIconOnly kind='secondary' iconDescription='Refresh' onClick={refresh}>Refresh Zones</Button>
+                  <Button
+                    hasIconOnly
+                    kind="secondary"
+                    iconDescription='Refresh Zones'
+                    className="table-refresh-button"
+                    onClick={() => refresh()}
+                  >
+                    {loading && <InlineLoading
+                      status="active"
+                      small
+                      className="table-loading-spinner"
+                    />}
+                    {!loading && <Renew />}
+                  </Button>
                   <StateManager
                     renderLauncher={({ setOpen }) => (
                       <Button renderIcon={Add} kind="primary" iconDescription="New Zone" onClick={() => setOpen(true)}>New Zone</Button>)}>

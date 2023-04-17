@@ -206,7 +206,20 @@ const Records = function Records() {
                                         value={searchQuery}
                                         onChange={(event) => setSearchQuery(event.target.value)}
                                     />
-                                    <Button renderIcon={Renew} hasIconOnly kind='secondary' iconDescription='Refresh' onClick={recordRefresh}>Refresh Records</Button>
+                                    <Button
+                                        hasIconOnly
+                                        kind="secondary"
+                                        iconDescription='Refresh Records'
+                                        className="table-refresh-button"
+                                        onClick={() => recordRefresh()}
+                                    >
+                                        {recordLoading && <InlineLoading
+                                            status="active"
+                                            small
+                                            className="table-loading-spinner"
+                                        />}
+                                        {!recordLoading && <Renew />}
+                                    </Button>
                                     <StateManager
                                         renderLauncher={({ setOpen }) => (
                                             <Button renderIcon={Add} hasIconOnly kind='primary' iconDescription='Add Record' onClick={() => setOpen(true)}>Add Record</Button>)}>
