@@ -34,7 +34,9 @@ import {
     Breadcrumb,
     BreadcrumbItem,
     CodeSnippet,
-    NumberInput
+    NumberInput,
+    DataTableSkeleton,
+    BreadcrumbSkeleton
 } from '@carbon/react'
 import { Add, Edit, TrashCan, Error, Renew } from '@carbon/icons-react'
 import StateManager from "../components/StateManager";
@@ -89,7 +91,23 @@ const Records = function Records() {
     const [zoneError, setZonesError] = useState(null);
 
     if (recordError) return recordError.Message
-    if (recordLoading & !recordData) return <InlineLoading />
+    if (recordLoading & !recordData) {
+        return (
+            <>
+                <BreadcrumbSkeleton />
+                <br />
+                <br />
+                <Grid>
+                    <Column lg={16}>
+                        <Row>
+                            <DataTableSkeleton />
+                        </Row>
+                    </Column>
+                </Grid>
+            </>
+
+        )
+    }
     if (zoneLoading & !zoneData) return <InlineLoading />
 
     const handleSort = (field) => {
@@ -182,7 +200,6 @@ const Records = function Records() {
                             title={`Records for ${zoneData.results[0].name}`}
                         >
                             <TableToolbar aria-label='data table toolbar'>
-                                {recordLoading && <InlineLoading />}
                                 <TableToolbarContent>
                                     <Search
                                         label="Search"
@@ -260,9 +277,9 @@ const Records = function Records() {
                                                         title="Error"
                                                         subtitle={newRecordError}
                                                         kind="error"
-                                                        lowContrast={true} 
+                                                        lowContrast={true}
                                                         style={{ marginBottom: '1rem' }}
-                                                        />
+                                                    />
                                                 )}
                                             </Modal>
                                         )}
@@ -352,6 +369,12 @@ const Records = function Records() {
                                 </TableToolbarContent>
                             </TableToolbar>
                         </TableContainer>
+                        {recordLoading && (
+                            <InlineLoading
+                                description="Refreshing..."
+                                status="active"
+                            />
+                        )}
                     </Row>
                 </Column>
             </Grid>

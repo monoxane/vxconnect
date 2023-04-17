@@ -3,7 +3,8 @@ import React from 'react';
 import {
   Grid,
   Row,
-  Column
+  Column,
+  Button
 } from 'carbon-components-react'
 
 const NoRoute = function NoRoute() {
@@ -16,6 +17,10 @@ const NoRoute = function NoRoute() {
         </Row><br/>
         <Row>
           <p>This page does not exist.</p>
+        </Row>
+        <Row>
+          <br />
+          <Button href="/">Return to Dashboard</Button>
         </Row>
       </Column>
     </Grid>

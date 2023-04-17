@@ -32,7 +32,9 @@ import {
   Search,
   ExpandableSearch,
   Breadcrumb,
-  BreadcrumbItem
+  BreadcrumbItem,
+  DataTableSkeleton,
+  BreadcrumbSkeleton
 } from '@carbon/react'
 
 import {
@@ -65,8 +67,20 @@ const Zones = function Zones() {
   const [sortField, setSortField] = useState('name');
 
   if (error) return error.Message
-  if (loading & !data) return <InlineLoading />
-
+  if (loading & !data) {
+    return (
+      <>
+        <BreadcrumbSkeleton />
+        <br />
+        <br />
+        <Grid>
+          <Column lg={16}>
+            <DataTableSkeleton />
+          </Column>
+        </Grid>
+      </>
+    )
+  }
   const handleCloseModal = (setOpen) => {
     setNewZoneName("")
     setNewZoneLoading(false)
@@ -119,6 +133,33 @@ const Zones = function Zones() {
     item.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  const getPrimes = () => {
+    const primes = [];
+    let num = 10;
+
+    while (primes.length < 7) {
+      let isPrime = true;
+
+      for (let i = 2; i <= Math.sqrt(num); i++) {
+        if (num % i === 0) {
+          isPrime = false;
+          break;
+        }
+      }
+
+      if (isPrime) {
+        if (primes.length > 0 && num - primes[primes.length - 1] !== 10) {
+          primes.length = 0;
+        }
+        primes.push(num);
+      }
+
+      num++;
+    }
+
+    return primes;
+  }
+
   return (
     <>
       <Breadcrumb>
@@ -136,7 +177,6 @@ const Zones = function Zones() {
               title='Zones'
             >
               <TableToolbar aria-label='data table toolbar'>
-                {loading && <InlineLoading />}
                 <TableToolbarContent>
                   <Search
                     label="Search"
@@ -262,7 +302,6 @@ const Zones = function Zones() {
               </Table>
               <TableToolbar
                 aria-label='data table toolbar'>
-                {loading && <InlineLoading />}
                 <TableToolbarContent>
                   <Pagination
                     backwardText="Previous page"
@@ -280,6 +319,10 @@ const Zones = function Zones() {
                 </TableToolbarContent>
               </TableToolbar>
             </TableContainer>
+            {loading && <InlineLoading
+              description="Refreshing..."
+              status="active"
+            />}
           </Row>
         </Column>
       </Grid></>

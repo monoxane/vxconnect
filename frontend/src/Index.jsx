@@ -9,22 +9,25 @@ import "./index.scss";
 import './styles.scss';
 
 import { Theme, Content } from '@carbon/react'
-
+// Components
 import PersistLogin from './components/PersistLogin'
 import RequireAuth from './components/RequireAuth'
 import Header from './components/Header'
 import SideNav from './components/SideNav'
 
+import useAuth from './hooks/useAuth'
+import {AuthProvider} from './context/AuthProvider'
+
 // Login Pages
 import Login from "./Login/Login.jsx";
 
-// Dashboard Pages - all protected
+// Dashboard Pages
 import Dashboard from "./routes/Dashboard";
 import Zones from './Zones/Zones'
 import Records from "./Zones/Records";
 
-import useAuth from './hooks/useAuth'
-import {AuthProvider} from './context/AuthProvider'
+// Admin Pages
+import Users from "./Admin/Users";
 
 // Error Pages
 import NoRoute from "./components/NoRoute";
@@ -68,6 +71,9 @@ const App =  function App() {
               </Route>
               <Route element={<RequireAuth allowedRoles={["ADMIN", "ZONE_ADMIN"]} />}>
                 <Route exact path="/dns/zones/:zoneId/records" element={<Records />} />
+              </Route>
+              <Route element={<RequireAuth allowedRoles={["ADMIN"]} />}>
+                <Route exact path="/admin/users" element={<Users />} />
               </Route>
               {/* MAYBE: redirect /dns/zones/:zoneId to /dns/zone/:zoneId */}
               <Route element={<RequireAuth allowedRoles={["NOONEHASTHIS"]} />}>
