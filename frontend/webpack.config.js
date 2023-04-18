@@ -27,6 +27,7 @@ module.exports = (_, argv) => {
         title: 'Connect',
         template: 'src/index.html',
         filename: 'index.html',
+        favicon: './src/favicon.ico',
       }),
       isDevelopment && new ReactRefreshWebpackPlugin(),
     ].filter(Boolean),
