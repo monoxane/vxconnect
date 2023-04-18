@@ -37,7 +37,7 @@ import {
     NumberInput,
     DataTableSkeleton,
     BreadcrumbSkeleton,
-    Tag
+    Tag,
 } from "carbon-components-react";
 import { Add, Edit, TrashCan, Error, Renew, UserMultiple } from "@carbon/icons-react";
 import StateManager from "../components/StateManager"
@@ -90,12 +90,19 @@ const roleColours = [
     }
 ]
 
+
 const Users = function Users() {
     const axios = getAxiosPrivate()
     const navigate = useNavigate()
     const [{ data, loading, error }, refresh] = useAxiosPrivate()(
         '/api/v1/users'
     )
+
+    const [newUserName, setNewUserName] = useState("")
+    const [newUserLoading, setNewUserLoading] = useState(false)
+    const [newUserError, setNewUserError] = useState("");
+    const [newUserPassword, setNewUserPassword] = useState("");
+    const [newUserRole, setNewUserRole] = useState("USER");
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(20);
     const [searchQuery, setSearchQuery] = useState("");
@@ -117,6 +124,45 @@ const Users = function Users() {
             </>
         )
     }
+
+    const handleCloseModal = (setOpen) => {
+        setNewUserName("")
+        setNewUserLoading(false)
+        setNewUserError("")
+        setOpen(false)
+    }
+
+    async function modelUserAddSubmit() {
+        setNewUserLoading(true)
+        console.log(newUserName)
+        if (newUserName.length < 3) {
+            setNewUserError("Username too short")
+            setNewUserLoading(false)
+            return
+        }
+        if (newUserPassword.length < 8) {
+            setNewUserError("Password too short")
+            setNewUserLoading(false)
+            return
+        }
+        try {
+            const response = await axios.post('/api/v1/users', {
+                username: newUserName,
+                password: newUserPassword,
+                roles: [newUserRole]
+            })
+            console.log(response)
+            handleCloseModal(setOpen)
+            refresh()
+        } catch (error) {
+            console.log(error)
+            setNewUserError(error.response.data.message)
+            setNewUserLoading(false)
+        }
+        setNewUserLoading(false)
+        refresh()
+    }
+
     const handleSort = (field) => {
         setSortField(field);
         setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -130,6 +176,7 @@ const Users = function Users() {
     const filteredItems = data.results.filter((item) =>
         item.username.toLowerCase().includes(searchQuery.toLowerCase())
     );
+
     return (
         <>
             <Breadcrumb>
@@ -167,13 +214,80 @@ const Users = function Users() {
                                     />}
                                     {!loading && <Renew />}
                                 </Button>
-                                <Button
-                                    renderIcon={Add}
-                                    iconDescription="Add"
-                                    onClick={() => navigate('/admin/users/create')}
-                                >
-                                    Add
-                                </Button>
+                                <StateManager
+                                    renderLauncher={({ setOpen }) => (
+                                        <Button renderIcon={Add} kind="primary" iconDescription="Create new user" onClick={() => setOpen(true)}>Create</Button>)}>
+                                    {({ open, setOpen }) => (
+                                        <Modal
+                                            open={open}
+                                            modalHeading="Add User"
+                                            modalLabel="Admin/Users"
+                                            primaryButtonText="Add"
+                                            secondaryButtonText="Cancel"
+                                            onRequestClose={() => handleCloseModal(setOpen)}
+                                            onRequestSubmit={() => modelUserAddSubmit(setOpen)}
+                                            onSecondarySubmit={() => handleCloseModal(setOpen)}
+                                            primaryButtonDisabled={newUserLoading}
+                                        >
+                                            <p style={{ marginBottom: '1rem' }}>
+                                                Create a new user
+                                            </p>
+                                            <TextInput
+                                                id="username"
+                                                labelText="Username"
+                                                placeholder="Username"
+                                                value={newUserName}
+                                                invalid={newUserError.length > 0}
+                                                invalidText={newUserError}
+                                                onChange={(e) => setNewUserName(e.target.value)}
+                                            />
+                                            <br />
+                                            <TextInput.PasswordInput
+                                                id="password"
+                                                labelText="Password"
+                                                placeholder="Password"
+                                                value={newUserPassword}
+                                                onChange={(e) => setNewUserPassword(e.target.value)}
+                                                invalid={newUserError.length > 0}
+                                                invalidText={newUserError}
+                                            />
+                                            <br />
+                                            <Select
+                                                id="role"
+                                                labelText="Role"
+                                                value={newUserRole}
+                                                onChange={(e) => setNewUserRole(e.target.value)}
+                                            >
+                                                <SelectItem
+                                                    value="USER"
+                                                    text="User"
+                                                />
+                                                <SelectItem
+                                                    value="ADMIN"
+                                                    text="Admin"
+                                                />
+                                            </Select>
+                                            {newUserError && (
+                                                <InlineNotification
+                                                    kind="error"
+                                                    title="Error"
+                                                    subtitle={newUserError}
+                                                    iconDescription="Close notification"
+                                                    onCloseButtonClick={() => setNewUserError("")}
+                                                />
+                                            )}
+                                            {newUserLoading && (
+                                                <InlineLoading
+                                                    status="active"
+                                                    description="Loading"
+                                                    className="loading-spinner"
+                                                />
+                                            )
+                                            }
+                                        </Modal>
+                                    )}
+
+                                </StateManager>
                             </TableToolbarContent>
                         </TableToolbar>
                         <Table>

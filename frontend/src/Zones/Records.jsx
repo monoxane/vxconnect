@@ -204,7 +204,7 @@ const Records = function Records() {
                                     <Search
                                         label="Search"
                                         value={searchQuery}
-                                        onChange={(event) => setSearchQuery(event.target.value)}
+                                        onChange={(e) => setSearchQuery(e.target.value)}
                                     />
                                     <Button
                                         hasIconOnly
@@ -241,8 +241,8 @@ const Records = function Records() {
                                                     value={newRecordName}
                                                     style={{ marginBottom: '1rem' }}
                                                     required
-                                                    onChange={(event) => {
-                                                        const inputValue = event.target.value;
+                                                    onChange={(e) => {
+                                                        const inputValue = e.target.value;
                                                         if (inputValue.endsWith("@")) {
                                                             setNewRecordName(inputValue.replace("@", `${zoneData.results[0].name}`))
                                                         } else if (inputValue.endsWith(`${zoneData.results[0].name}`)) {
@@ -256,7 +256,7 @@ const Records = function Records() {
                                                     id="newRecordType"
                                                     labelText="Type"
                                                     value={newRecordType}
-                                                    onChange={(event) => setNewRecordType(event.target.value)}
+                                                    onChange={(e) => setNewRecordType(e.target.value)}
                                                     style={{ marginBottom: '1rem' }}
                                                 >
                                                     <SelectItem text="A" value="A" />
@@ -273,7 +273,7 @@ const Records = function Records() {
                                                     labelText="Target"
                                                     placeholder="Target"
                                                     value={newRecordTarget}
-                                                    onChange={(event) => setNewRecordTarget(event.target.value)}
+                                                    onChange={(e) => setNewRecordTarget(e.target.value)}
                                                     style={{ marginBottom: '1rem' }}
                                                 />
                                                 <NumberInput
@@ -282,7 +282,7 @@ const Records = function Records() {
                                                     min={0}
                                                     max={604800}
                                                     value={newRecordTTL}
-                                                    onChange={(event) => setNewRecordTTL(event.target.value)}
+                                                    onChange={(e) => setNewRecordTTL(e.target.value)}
                                                     placeholder="60"
                                                 />
                                                 {newRecordError && (
