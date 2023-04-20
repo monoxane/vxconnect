@@ -1,4 +1,4 @@
-package persistance
+package persistence
 
 import (
 	"errors"
@@ -27,7 +27,7 @@ func NewMariaDBStore(host string, port int, user, pass, name string) (*MariaDBSt
 		username:     user,
 		password:     pass,
 		databaseName: name,
-		log:          logging.Log.With().Str("package", "persistance").Str("store", "mariadb").Str("host", host).Logger(),
+		log:          logging.Log.With().Str("package", "persistence").Str("store", "mariadb").Str("host", host).Logger(),
 	}
 
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local", store.username, store.password, store.hostname, store.port, store.databaseName)

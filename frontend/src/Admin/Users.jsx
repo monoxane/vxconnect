@@ -233,6 +233,7 @@ const Users = function Users() {
                                                 Create a new user
                                             </p>
                                             <TextInput
+                                                key="username-input"
                                                 id="username"
                                                 labelText="Username"
                                                 placeholder="Username"

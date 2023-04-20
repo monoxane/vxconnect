@@ -7,7 +7,7 @@ import (
 	"github.com/monoxane/vxconnect/internal/controller"
 	"github.com/monoxane/vxconnect/internal/dns"
 	"github.com/monoxane/vxconnect/internal/logging"
-	"github.com/monoxane/vxconnect/internal/persistance"
+	"github.com/monoxane/vxconnect/internal/persistence"
 )
 
 const (
@@ -29,18 +29,18 @@ func main() {
 
 	log = logging.Log.With().Str("package", "cmd").Logger()
 
-	switch config.PersistanceDriver {
+	switch config.PersistenceDriver {
 	case "mariadb":
 	}
 
-	store, storeError := persistance.NewMariaDBStore(config.MariaDBHost, config.MariaDBPort, config.MariaDBUsername, config.MariaDBPassword, config.DatabaseName)
+	store, storeError := persistence.NewMariaDBStore(config.MariaDBHost, config.MariaDBPort, config.MariaDBUsername, config.MariaDBPassword, config.DatabaseName)
 	if storeError != nil {
-		log.Fatal().Err(storeError).Msg("an error occured while initialising the persistance store")
+		log.Fatal().Err(storeError).Msg("an error occured while initialising the persistence store")
 	}
 
 	migrationError := store.Migrate()
 	if migrationError != nil {
-		log.Fatal().Err(migrationError).Msg("an error occured while migrating the persistance store")
+		log.Fatal().Err(migrationError).Msg("an error occured while migrating the persistence store")
 	}
 
 	dnsService := dns.New()

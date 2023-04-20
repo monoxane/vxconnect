@@ -13,7 +13,7 @@ var (
 
 	JWTSecret string
 
-	PersistanceDriver string
+	PersistenceDriver string
 	MariaDBHost       string
 	MariaDBPort       int
 	MariaDBUsername   string
@@ -53,10 +53,10 @@ func Load() bool {
 		return false
 	}
 
-	if viper.IsSet("PERSISTANCE_DRIVER") {
-		PersistanceDriver = viper.GetString("PERSISTANCE_DRIVER")
+	if viper.IsSet("PERSISTENCE_DRIVER") {
+		PersistenceDriver = viper.GetString("PERSISTENCE_DRIVER")
 
-		switch PersistanceDriver {
+		switch PersistenceDriver {
 		case "mariadb":
 			if viper.IsSet("MARIADB_HOST") {
 				MariaDBHost = viper.GetString("MARIADB_HOST")
@@ -99,11 +99,11 @@ func Load() bool {
 			}
 
 		default:
-			log.Printf("[ENV] UNKNOWN PERSISTANCE DRIVER %s", PersistanceDriver)
+			log.Printf("[ENV] UNKNOWN PERSISTENCE DRIVER %s", PersistenceDriver)
 			return false
 		}
 	} else {
-		log.Printf("[ENV] NO PERSISTANCE DRIVER SPECIFIED")
+		log.Printf("[ENV] NO PERSISTENCE DRIVER SPECIFIED")
 		return false
 	}
 
