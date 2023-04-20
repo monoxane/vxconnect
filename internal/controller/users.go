@@ -24,7 +24,7 @@ func (controller *Controller) HandleAuth(context *gin.Context) {
 		return
 	}
 
-	dbUser, userErr := controller.persistance.GetUserByUsername(payload.Username)
+	dbUser, userErr := controller.persistence.GetUserByUsername(payload.Username)
 	if userErr != nil {
 		utilities.RESTError(context, http.StatusUnauthorized, "user not found", userErr)
 		return
@@ -62,7 +62,7 @@ func (controller *Controller) HandleUsers(context *gin.Context) {
 		return
 	}
 
-	users, usersErr := controller.persistance.GetUsers()
+	users, usersErr := controller.persistence.GetUsers()
 	if usersErr != nil {
 		utilities.RESTError(context, http.StatusInternalServerError, "unable to get users", usersErr)
 		return
@@ -114,7 +114,7 @@ func (controller *Controller) HandleNewUser(context *gin.Context) {
 		Zones:        payload.Zones,
 	}
 
-	storeErr := controller.persistance.CreateUser(user)
+	storeErr := controller.persistence.CreateUser(user)
 	if errors.Is(storeErr, gorm.ErrDuplicatedKey) {
 		utilities.RESTError(context, http.StatusConflict, "username in use", storeErr)
 		return
@@ -145,7 +145,7 @@ func (controller *Controller) HandleUpdateUser(context *gin.Context) {
 		return
 	}
 
-	user, userErr := controller.persistance.GetUserById(id)
+	user, userErr := controller.persistence.GetUserById(id)
 	if userErr != nil {
 		utilities.RESTError(context, http.StatusBadRequest, "user does not exist", userErr)
 		return
@@ -153,7 +153,7 @@ func (controller *Controller) HandleUpdateUser(context *gin.Context) {
 
 	user.Zones = payload.Zones
 
-	storeErr := controller.persistance.SaveUser(user)
+	storeErr := controller.persistence.SaveUser(user)
 	if storeErr != nil {
 		utilities.RESTError(context, http.StatusInternalServerError, "unable to store user", storeErr)
 		return
@@ -172,7 +172,7 @@ func (controller *Controller) HandleDeleteUser(context *gin.Context) {
 
 	id := context.Param("id")
 
-	deleteErr := controller.persistance.DeleteUser(id)
+	deleteErr := controller.persistence.DeleteUser(id)
 	if errors.Is(deleteErr, gorm.ErrRecordNotFound) {
 		utilities.RESTError(context, http.StatusBadRequest, "user does not exist", nil)
 		return

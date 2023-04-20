@@ -24,7 +24,7 @@ func (controller *Controller) HandleZones(context *gin.Context) {
 		return
 	}
 
-	zones, zonesErr := controller.persistance.GetZones()
+	zones, zonesErr := controller.persistence.GetZones()
 	if zonesErr != nil {
 		utilities.RESTError(context, http.StatusInternalServerError, "unable to get zones", zonesErr)
 		return
@@ -48,7 +48,7 @@ func (controller *Controller) HandleZone(context *gin.Context) {
 
 	id := context.Param("zone")
 
-	zone, zoneErr := controller.persistance.GetZoneByID(id)
+	zone, zoneErr := controller.persistence.GetZoneByID(id)
 	if errors.Is(zoneErr, gorm.ErrRecordNotFound) {
 		utilities.RESTError(context, http.StatusNotFound, "zone not found", zoneErr)
 		return
@@ -79,7 +79,7 @@ func (controller *Controller) HandleNewZone(context *gin.Context) {
 
 	payload.ID = uuid.NewString()
 
-	storeErr := controller.persistance.CreateZone(payload)
+	storeErr := controller.persistence.CreateZone(payload)
 	if errors.Is(storeErr, gorm.ErrDuplicatedKey) {
 		utilities.RESTError(context, http.StatusConflict, "zone alerady exists", storeErr)
 		return
@@ -103,13 +103,13 @@ func (controller *Controller) HandleDeleteZone(context *gin.Context) {
 
 	id := context.Param("zone")
 
-	deleteRecErr := controller.persistance.DeleteZoneRecords(id)
+	deleteRecErr := controller.persistence.DeleteZoneRecords(id)
 	if deleteRecErr != nil {
 		utilities.RESTError(context, http.StatusInternalServerError, "an error occured while deleting zone records", nil)
 		return
 	}
 
-	deleteErr := controller.persistance.DeleteZone(id)
+	deleteErr := controller.persistence.DeleteZone(id)
 	if errors.Is(deleteErr, gorm.ErrRecordNotFound) {
 		utilities.RESTError(context, http.StatusBadRequest, "zone does not exist", nil)
 		return
@@ -122,14 +122,14 @@ func (controller *Controller) HandleDeleteZone(context *gin.Context) {
 }
 
 func (controller *Controller) updateZoneSOA(id string) error {
-	zone, zoneErr := controller.persistance.GetZoneByID(id)
+	zone, zoneErr := controller.persistence.GetZoneByID(id)
 	if zoneErr != nil {
 		return fmt.Errorf("unable to get zone while updating SOA: %s", zoneErr)
 	}
 
 	zone.UpdatedAt = int(time.Now().UnixNano())
 
-	updateErr := controller.persistance.SaveZone(zone)
+	updateErr := controller.persistence.SaveZone(zone)
 	if updateErr != nil {
 		return fmt.Errorf("unable to save zone while updating SOA: %s", updateErr)
 	}
@@ -149,7 +149,7 @@ func (controller *Controller) handleZoneRecords(context *gin.Context) {
 
 	zone := context.Param("zone")
 
-	records, recordErr := controller.persistance.GetZoneRecords(zone)
+	records, recordErr := controller.persistence.GetZoneRecords(zone)
 	if recordErr != nil {
 		utilities.RESTError(context, http.StatusInternalServerError, "unable to get zone records", recordErr)
 		return
@@ -183,7 +183,7 @@ func (controller *Controller) HandleNewZoneRecord(context *gin.Context) {
 	payload.ID = uuid.NewString()
 	payload.ZoneID = zone
 
-	storeErr := controller.persistance.CreateRecord(payload)
+	storeErr := controller.persistence.CreateRecord(payload)
 	if errors.Is(storeErr, gorm.ErrDuplicatedKey) {
 		utilities.RESTError(context, http.StatusConflict, "zone record alerady exists", storeErr)
 		return
@@ -226,7 +226,7 @@ func (controller *Controller) HandleUpdateZoneRecord(context *gin.Context) {
 	zone := context.Param("zone")
 	id := context.Param("id")
 
-	record, recordErr := controller.persistance.GetRecordByID(id)
+	record, recordErr := controller.persistence.GetRecordByID(id)
 	if recordErr != nil {
 		utilities.RESTError(context, http.StatusBadRequest, "record does not exist", recordErr)
 		return
@@ -235,7 +235,7 @@ func (controller *Controller) HandleUpdateZoneRecord(context *gin.Context) {
 	record.TTL = payload.TTL
 	record.Target = payload.Target
 
-	storeErr := controller.persistance.SaveRecord(record)
+	storeErr := controller.persistence.SaveRecord(record)
 	if errors.Is(storeErr, gorm.ErrDuplicatedKey) {
 		utilities.RESTError(context, http.StatusConflict, "zone record alerady exists", storeErr)
 		return
@@ -265,7 +265,7 @@ func (controller *Controller) HandleDeleteZoneRecord(context *gin.Context) {
 
 	id := context.Param("id")
 
-	deleteErr := controller.persistance.DeleteRecord(id)
+	deleteErr := controller.persistence.DeleteRecord(id)
 	if errors.Is(deleteErr, gorm.ErrRecordNotFound) {
 		utilities.RESTError(context, http.StatusBadRequest, "record does not exist", nil)
 		return

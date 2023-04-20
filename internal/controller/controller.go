@@ -8,13 +8,13 @@ import (
 	"github.com/monoxane/vxconnect/internal/auth"
 	"github.com/monoxane/vxconnect/internal/entity"
 	"github.com/monoxane/vxconnect/internal/logging"
-	"github.com/monoxane/vxconnect/internal/persistance"
+	"github.com/monoxane/vxconnect/internal/persistence"
 )
 
 type Controller struct {
 	restPort    int
 	restEngine  *gin.Engine
-	persistance persistance.Store
+	persistence persistence.Store
 	log         logging.Logger
 }
 
@@ -28,11 +28,11 @@ var (
 	controller *Controller
 )
 
-func New(port int, store persistance.Store) *Controller {
+func New(port int, store persistence.Store) *Controller {
 	c := &Controller{
 		restEngine:  NewRESTServer(),
 		restPort:    port,
-		persistance: store,
+		persistence: store,
 		log:         logging.Log.With().Str("package", "controller").Logger(),
 	}
 
@@ -92,6 +92,6 @@ func (c *Controller) Run() {
 
 func QueryRecord(name string) *entity.Record { return controller.QueryRecord(name) }
 func (c *Controller) QueryRecord(name string) *entity.Record {
-	record, _ := c.persistance.GetRecordbyName(name)
+	record, _ := c.persistence.GetRecordbyName(name)
 	return record
 }
